@@ -9,6 +9,8 @@
 
 import wx
 import wx.xrc
+import wx.dataview
+
 
 ###########################################################################
 ## Class MainFrame
@@ -19,7 +21,7 @@ class MainFrame ( wx.Frame ):
 	def __init__( self, parent ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Pure Clip", pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
-		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+		self.SetSizeHints( wx.Size( 500,300 ), wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
 		bSizer3 = wx.BoxSizer( wx.VERTICAL )
@@ -28,28 +30,62 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer4 = wx.BoxSizer( wx.VERTICAL )
 
-		gSizer1 = wx.GridSizer( 0, 3, 0, 0 )
+		self.dataViewCtrl = wx.dataview.DataViewCtrl( self.m_panel2, 1, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.dataViewCtrl.SetMinSize( wx.Size( -1,130 ) )
+		self.dataViewCtrl.SetMaxSize( wx.Size( -1,130 ) )
 
-		self.m_staticText1 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"文件名", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText1.Wrap( -1 )
+		bSizer4.Add( self.dataViewCtrl, 0, wx.ALL, 5 )
 
-		gSizer1.Add( self.m_staticText1, 0, wx.ALL, 5 )
+		bSizer81 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText2 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"开始时间", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText2.Wrap( -1 )
+		bSizer9 = wx.BoxSizer( wx.HORIZONTAL )
 
-		gSizer1.Add( self.m_staticText2, 0, wx.ALL, 5 )
+		self.m_staticText71 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"开始时间", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText71.Wrap( -1 )
 
-		self.m_staticText3 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"结束时间", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText3.Wrap( -1 )
+		bSizer9.Add( self.m_staticText71, 0, wx.ALL, 5 )
 
-		gSizer1.Add( self.m_staticText3, 0, wx.ALL, 5 )
+		self.m_textCtrl21 = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer9.Add( self.m_textCtrl21, 0, wx.ALL, 5 )
 
 
-		bSizer4.Add( gSizer1, 1, wx.EXPAND, 5 )
+		bSizer81.Add( bSizer9, 1, wx.EXPAND, 5 )
+
+		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText8 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"结束时间", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8.Wrap( -1 )
+
+		bSizer10.Add( self.m_staticText8, 0, wx.ALL, 5 )
+
+		self.m_textCtrl3 = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_textCtrl3, 0, wx.ALL, 5 )
+
+
+		bSizer81.Add( bSizer10, 1, wx.EXPAND, 5 )
+
+		self.m_button7 = wx.Button( self.m_panel2, wx.ID_ANY, u"应用时间", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer81.Add( self.m_button7, 0, wx.ALL, 5 )
+
+
+		bSizer4.Add( bSizer81, 1, wx.EXPAND, 5 )
+
+		bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.AddFileBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"添加文件", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer4.Add( self.AddFileBtn, 0, wx.ALL, 5 )
+		bSizer7.Add( self.AddFileBtn, 0, wx.ALL, 5 )
+
+		self.m_button4 = wx.Button( self.m_panel2, wx.ID_ANY, u"移除文件", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button4, 0, wx.ALL, 5 )
+
+		self.m_button5 = wx.Button( self.m_panel2, wx.ID_ANY, u"向上移动", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button5, 0, wx.ALL, 5 )
+
+		self.m_button6 = wx.Button( self.m_panel2, wx.ID_ANY, u"向下移动", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button6, 0, wx.ALL, 5 )
+
+
+		bSizer4.Add( bSizer7, 1, wx.EXPAND, 5 )
 
 
 		self.m_panel2.SetSizer( bSizer4 )

@@ -2,6 +2,7 @@
 
 import os
 import wx
+import wx.dataview
 import PureClip
 
 # Implementing MainFrame
@@ -9,17 +10,29 @@ class PureClipMainFrame( PureClip.MainFrame ):
 	def __init__( self, parent ):
 		PureClip.MainFrame.__init__( self, parent )
 
+		# 把dataViewCtrl和dataViewModel连接
+		self.model = dataViewModel()
+		self.dataViewCtrl.AssociateModel(self.model)
+
+		# 在dataViewCtrl显示行
+		col0 = self.dataViewCtrl.AppendTextColumn("序号", 0)
+		col1 = self.dataViewCtrl.AppendTextColumn("文件名", 1)
+		col2 = self.dataViewCtrl.AppendTextColumn("开始时间", 2)
+		col3 = self.dataViewCtrl.AppendTextColumn("结束时间", 3)
+		col4 = self.dataViewCtrl.AppendTextColumn("结束时间", 4)
+
+		self.filenum = 0
+
 	# Handlers for MainFrame events.
 	def AddFileBtnOnClick( self, event ):
 		# TODO: Implement AddFileBtnOnClick
 		self.dirname = ''
 		# 文件选择对话框
-		FileDlg = wx.FileDialog(self, u"选择导入的文件", self.dirname, "", "*.mp4", wx.FD_OPEN)
+		FileDlg = wx.FileDialog(self, u"选择导入的文件", self.dirname, "", "*.*", wx.FD_OPEN)
 		if FileDlg.ShowModal() == wx.OK:
 			# 文件导入
-			self.filename = FileDlg.GetFilename()
-			self.dirname = FileDlg.GetDirectory()
-			self.path = os.path.join(self.dirname, self.filename)
+			videoDataTemp = videoData(self.filenum, FileDlg.GetFilename(), "BEGIN", "END", FileDlg.GetPath())
+			self.model.SetValue()
 
 		FileDlg.Destroy()
 
@@ -30,3 +43,56 @@ class PureClipMainFrame( PureClip.MainFrame ):
 	def ProjectWebBtnOnClick( self, event ):
 		# TODO: Implement ProjectWebBtnOnClick
 		pass
+
+# ---------------------------------------------------------
+# For dataViewModel
+	
+# viedoData
+# col 1		id
+# col 2		filename
+# col 3		startTime
+# col 4		endTime
+class videoData(object):
+	def __init__(self, id, filename, startTime, endTime, path):
+		self.id = id
+		self.filename = filename
+		self.startTime = startTime
+		self.endTime = endTime
+		self.path = path
+	
+	def __repr__(self) -> str:
+		return 'videoData: %s, %s, %s, %s' % (self.id, self.filename, self.startTime, self.endTime)
+	
+class dataViewModel(wx.dataview.PyDataViewModel):
+	def __init__(self):
+		super().__init__()
+
+	def GetValue(self, item, col):
+		node = self.ItemToObject(item)
+
+		if isinstance(node, videoData):
+			mapper = {
+				0:node.id,
+				1:node.filename,
+				2:node.startTime,
+				3:node.endTime,
+				4:node.path
+			}
+			return mapper[col]
+		else:
+			raise RuntimeError("unknown data node type!")
+		
+	def SetValue(self, variant, item, col):
+		node = self.ItemToObject(item)
+		if isinstance(node, videoData):
+			if col == 0:
+				node.id = variant
+			elif col == 1:
+				node.filename = variant
+			elif col == 2:
+				node.startTime = variant
+			elif col == 3:
+				node.endTime = variant
+			elif col == 4:
+				node.path = variant
+		return True
