@@ -9,8 +9,7 @@
 
 import wx
 import wx.xrc
-import wx.dataview
-
+from MyCustomCtrl import *
 
 ###########################################################################
 ## Class MainFrame
@@ -30,11 +29,12 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer4 = wx.BoxSizer( wx.VERTICAL )
 
-		self.dataViewCtrl = wx.dataview.DataViewCtrl( self.m_panel2, 1, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.dataViewCtrl.SetMinSize( wx.Size( -1,130 ) )
-		self.dataViewCtrl.SetMaxSize( wx.Size( -1,130 ) )
+		self.listCtrl = SortedListCtrl(self.m_panel2)
+		self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnListItemSelected)
+		self.listCtrl.SetMinSize( wx.Size( 470,130 ) )
+		self.listCtrl.SetMaxSize( wx.Size( 470,130 ) )
 
-		bSizer4.Add( self.dataViewCtrl, 0, wx.ALL, 5 )
+		bSizer4.Add( self.listCtrl, 0, wx.ALL, 5 )
 
 		bSizer81 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -45,8 +45,8 @@ class MainFrame ( wx.Frame ):
 
 		bSizer9.Add( self.m_staticText71, 0, wx.ALL, 5 )
 
-		self.m_textCtrl21 = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer9.Add( self.m_textCtrl21, 0, wx.ALL, 5 )
+		self.StartTimeCtrl = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer9.Add( self.StartTimeCtrl, 0, wx.ALL, 5 )
 
 
 		bSizer81.Add( bSizer9, 1, wx.EXPAND, 5 )
@@ -58,14 +58,14 @@ class MainFrame ( wx.Frame ):
 
 		bSizer10.Add( self.m_staticText8, 0, wx.ALL, 5 )
 
-		self.m_textCtrl3 = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer10.Add( self.m_textCtrl3, 0, wx.ALL, 5 )
+		self.EndTimeCtrl = wx.TextCtrl( self.m_panel2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.EndTimeCtrl, 0, wx.ALL, 5 )
 
 
 		bSizer81.Add( bSizer10, 1, wx.EXPAND, 5 )
 
-		self.m_button7 = wx.Button( self.m_panel2, wx.ID_ANY, u"应用时间", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer81.Add( self.m_button7, 0, wx.ALL, 5 )
+		self.ApplyTimeBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"应用时间", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer81.Add( self.ApplyTimeBtn, 0, wx.ALL, 5 )
 
 
 		bSizer4.Add( bSizer81, 1, wx.EXPAND, 5 )
@@ -75,14 +75,14 @@ class MainFrame ( wx.Frame ):
 		self.AddFileBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"添加文件", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.AddFileBtn, 0, wx.ALL, 5 )
 
-		self.m_button4 = wx.Button( self.m_panel2, wx.ID_ANY, u"移除文件", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button4, 0, wx.ALL, 5 )
+		self.RemoveBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"移除文件", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.RemoveBtn, 0, wx.ALL, 5 )
 
-		self.m_button5 = wx.Button( self.m_panel2, wx.ID_ANY, u"向上移动", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button5, 0, wx.ALL, 5 )
+		self.MovUpBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"向上移动", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.MovUpBtn, 0, wx.ALL, 5 )
 
-		self.m_button6 = wx.Button( self.m_panel2, wx.ID_ANY, u"向下移动", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button6, 0, wx.ALL, 5 )
+		self.MovDownBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"向下移动", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.MovDownBtn, 0, wx.ALL, 5 )
 
 
 		bSizer4.Add( bSizer7, 1, wx.EXPAND, 5 )
@@ -102,10 +102,10 @@ class MainFrame ( wx.Frame ):
 
 		bSizer6.Add( self.m_staticText4, 0, wx.ALL, 5 )
 
-		self.m_textCtrl2 = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 270,25 ), 0 )
-		self.m_textCtrl2.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		self.ExportNameCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 270,25 ), 0 )
+		self.ExportNameCtrl.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
-		bSizer6.Add( self.m_textCtrl2, 0, wx.ALL, 5 )
+		bSizer6.Add( self.ExportNameCtrl, 0, wx.ALL, 5 )
 
 
 		bSizer5.Add( bSizer6, 1, wx.EXPAND, 5 )
@@ -149,7 +149,11 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.ApplyTimeBtn.Bind( wx.EVT_BUTTON, self.ApplyTimeButtonOnClick )
 		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
+		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
+		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.MovUpBtnOnClick )
+		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.MovDownBtnOnClick )
 		self.ExportBtn.Bind( wx.EVT_BUTTON, self.ExportBtnOnClick )
 		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.ProjectWebBtnOnClick )
 
@@ -158,7 +162,19 @@ class MainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def ApplyTimeButtonOnClick( self, event ):
+		event.Skip()
+
 	def AddFileBtnOnClick( self, event ):
+		event.Skip()
+
+	def RemoveBtnOnClick( self, event ):
+		event.Skip()
+
+	def MovUpBtnOnClick( self, event ):
+		event.Skip()
+
+	def MovDownBtnOnClick( self, event ):
 		event.Skip()
 
 	def ExportBtnOnClick( self, event ):

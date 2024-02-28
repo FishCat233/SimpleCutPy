@@ -1,6 +1,5 @@
 import wx
 from PureClipMainFrame import *
-from DataUtils import *
 
 if __name__ == '__main__':
     App = wx.App()
