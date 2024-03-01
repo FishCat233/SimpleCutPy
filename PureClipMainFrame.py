@@ -56,9 +56,26 @@ class PureClipMainFrame(PureClip.MainFrame):
 		file_dlg.Destroy()
 
 	def RemoveBtnOnClick(self, event):
-		# TODO: Implement RemoveBtnOnClick
-		print(self.item_list)
-		pass
+		# 删除列表中的项
+		delete_index = self.first_selected_index
+		self.item_list.pop(delete_index)
+
+		# 删除界面中的项
+
+		self.list_ctrl.DeleteItem(delete_index)
+
+		# 删除以后进行序号重排
+		for i in range(len(self.item_list)):
+			if i < delete_index:
+				continue
+
+			# 从删除项以后的每一个项的序号都要 -1
+			self.item_list[i]["no"] -= 1
+
+			# 从删除项开始后面的每一个物品都重新加载
+			self.list_load_item(self.item_list[i], i)
+
+
 
 	def MovUpBtnOnClick(self, event):
 		if self.first_selected_index == -1:
