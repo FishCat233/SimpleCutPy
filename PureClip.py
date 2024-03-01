@@ -9,7 +9,6 @@
 
 import wx
 import wx.xrc
-from MyCustomCtrl import *
 
 ###########################################################################
 ## Class MainFrame
@@ -29,12 +28,10 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer4 = wx.BoxSizer( wx.VERTICAL )
 
-		self.listCtrl = SortedListCtrl(self.m_panel2)
-		self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnListItemSelected)
-		self.listCtrl.SetMinSize( wx.Size( 470,130 ) )
-		self.listCtrl.SetMaxSize( wx.Size( 470,130 ) )
+		self.list_ctrl = wx.ListCtrl( self.m_panel2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SORT_ASCENDING )
+		self.list_ctrl.SetMinSize( wx.Size( 470,130 ) )
 
-		bSizer4.Add( self.listCtrl, 0, wx.ALL, 5 )
+		bSizer4.Add( self.list_ctrl, 0, wx.ALL, 5 )
 
 		bSizer81 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -149,6 +146,7 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.list_ctrl_on_selected )
 		self.ApplyTimeBtn.Bind( wx.EVT_BUTTON, self.ApplyTimeButtonOnClick )
 		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
 		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
@@ -162,6 +160,9 @@ class MainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def list_ctrl_on_selected( self, event ):
+		event.Skip()
+
 	def ApplyTimeButtonOnClick( self, event ):
 		event.Skip()
 

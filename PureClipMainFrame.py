@@ -2,122 +2,145 @@
 
 import wx
 import PureClip
-import wx.lib.mixins.listctrl
+
 
 # Implementing MainFrame
-class PureClipMainFrame( PureClip.MainFrame ):
-	def __init__( self, parent ):
-		
+class PureClipMainFrame(PureClip.MainFrame):
+	def __init__(self, parent=None, debug_log_level=0):
+		PureClip.MainFrame.__init__(self, parent)
 
-		PureClip.MainFrame.__init__( self, parent )
+		self.first_selected_index = 0
+		self.debug_log_level = debug_log_level
+		self.item_list = []  # 列表是控件上的映射，列表的物品顺序就是控件上物品的顺序
 
-		self.listCtrl.InsertColumn(0, "序号", width=40)
-		self.listCtrl.InsertColumn(1, "文件名", width=280)
-		self.listCtrl.InsertColumn(2, "开始时间", width=65)
-		self.listCtrl.InsertColumn(3, "结束时间", width=65)
-		self.listCtrl.InsertColumn(4, "文件路径", width=238)
-
-		self.itemMap = {}
-
-		self.LOGOUT = True
+		# list_ctrl 控件添加列
+		self.list_ctrl.InsertColumn(0, "序号", width=40)
+		self.list_ctrl.InsertColumn(1, "文件名", width=280)
+		self.list_ctrl.InsertColumn(2, "开始时间", width=65)
+		self.list_ctrl.InsertColumn(3, "结束时间", width=65)
+		self.list_ctrl.InsertColumn(4, "文件路径", width=238)
 
 	# Handlers for MainFrame events.
-	def listCtrlOnListItemSelected( self, event ):
-		self.firstSelectedIndex = self.listCtrl.GetFirstSelected()
-		self.LOG("Selected Item Index: {}, Selected Item ID: {}".format(self.firstSelectedIndex, self.listCtrl.GetItem(self.firstSelectedIndex, 0).GetText()))
-		return
-
-	def ApplyTimeButtonOnClick( self, event ):
+	def ApplyTimeButtonOnClick(self, event):
 		# TODO: Implement ApplyTimeButtonOnClick
 		pass
 
-	def AddFileBtnOnClick( self, event ):
+	def AddFileBtnOnClick(self, event):
 		# 文件选择对话框
-		FileDlg = wx.FileDialog(self, u"选择导入的文件", "", "", "*.mp4", wx.FD_OPEN)
-		if FileDlg.ShowModal() == wx.ID_OK:
+		file_dlg = wx.FileDialog(self, u"选择导入的文件", "", "", "*.mp4", wx.FD_OPEN)
+		if file_dlg.ShowModal() == wx.ID_OK:
 			# 文件导入
-			# col 0		id
-			# col 1		filename
-			# col 2		startTime
-			# col 3		endTime
-			# col 4		path
-			# (NO, filename, startTime, endTime, path)
+			# {NO, filename, startTime, endTime, path}
 
-			index = self.listCtrl.InsertItem(self.listCtrl.GetItemCount(),self.listCtrl.GetItemCount())
-			data = (str(index), FileDlg.GetFilename(), "开头", "结尾", FileDlg.GetPath())
-			self.listCtrl.itemDataMap[index] = data
-			self.listCtrl.SetItemData(index, index)
+			# 将导入文件数据转为字典
+			item_no = self.list_ctrl.GetItemCount()
+			filename = file_dlg.GetFilename()
+			path = file_dlg.GetPath()
+			data = {"no": item_no,
+					"filename": filename,
+					"start_time": "开头",
+					"end_time": "结尾",
+					"path": path
+					}
 
-			self.listCtrl.SetItem(index, 0, str(index))
-			self.listCtrl.SetItem(index, 1, FileDlg.GetFilename())
-			self.listCtrl.SetItem(index, 2, "开头")
-			self.listCtrl.SetItem(index, 3, "结尾")
-			self.listCtrl.SetItem(index, 4, FileDlg.GetPath())
+			# 加入到物品表
+			self.item_list.append(data)
 
-			self.itemMap[index] = index
+			# 显示数据在界面
+			index = self.list_ctrl.InsertItem(data["no"], data["no"])
+			self.list_load_item(data, index)
 
-			self.LOG("{}, {}".format(FileDlg.GetFilename(), FileDlg.GetPath()))
-			
-		FileDlg.Destroy()
+			if self.debug_log_level > 2:
+				print("{}, {}".format(file_dlg.GetFilename(), file_dlg.GetPath()))
 
-	def RemoveBtnOnClick( self, event ):
+		file_dlg.Destroy()
+
+	def RemoveBtnOnClick(self, event):
 		# TODO: Implement RemoveBtnOnClick
+		print(self.item_list)
 		pass
 
-	def MovUpBtnOnClick( self, event ):
-		selectedItemIndex = self.firstSelectedIndex
-		selectedItemNO = self.listCtrl.GetItem(selectedItemIndex, 0).GetText()
-		if selectedItemNO == '0':
-			return
-		
-		# run error with no causing, using the itemMap instead.
-		# preItemIndex = self.listCtrl.FindItem(0, str(int(selectedItemNO)-1), False)
+	def MovUpBtnOnClick(self, event):
+		if self.first_selected_index == -1:
+			return  # 如果没有选中
 
-		preItemIndex = -1
-		for i in self.itemMap:
-			if self.itemMap[i] == int(selectedItemNO) - 1:
-				preItemIndex = i
-				break
+		if self.first_selected_index == 0:
+			wx.MessageBox("选中素材已置顶。", "错误", style=wx.YES_DEFAULT | wx.ICON_QUESTION)
+			return  # 如果是第一个物品
 
-		preItemNO = str(self.itemMap[i])
+		self.item_swap(self.first_selected_index, self.first_selected_index - 1)
 
-		# self.LOG("SelectedItemIndex: {}, PreItemIndex: {}".format(selectedItemIndex, preItemIndex))
-		# self.LOG("SelectedItemNO: {}, PreItemNO: {}".format(selectedItemNO, preItemNO))
-		
-		self.listCtrl.SetItem(selectedItemIndex, 0, str(int(selectedItemNO) - 1))
-		self.listCtrl.SetItem(preItemIndex, 0, str(int(preItemNO) + 1))
+		self.list_ctrl.Select(self.first_selected_index, on=0)  # 取消原来的选中
+		self.list_ctrl.Select(self.first_selected_index - 1)
 
-		tempVar = -1
-		for i in self.itemMap:
-			if self.itemMap[i] == int(selectedItemNO):
-				tempVar = i
-				break
+	def MovDownBtnOnClick(self, event):
+		if self.first_selected_index == -1:
+			return  # 如果没有选中
 
-		self.listCtrl.itemDataMap[tempVar][0] = int(selectedItemNO) - 1
-		self.listCtrl.itemDataMap[preItemIndex][0] = int(selectedItemNO)
-		
-		self.itemMap[selectedItemIndex] = int(selectedItemNO) - 1
-		self.itemMap[preItemIndex] = int(preItemNO) + 1
+		if self.first_selected_index == self.list_ctrl.GetItemCount() - 1:
+			wx.MessageBox("选中素材在最末端。", "错误", style=wx.YES_DEFAULT | wx.ICON_QUESTION)
+			return  # 如果是最后一个
 
-		self.listCtrl.SetItemData(selectedItemIndex, int(selectedItemNO)-1)
-		self.listCtrl.SetItemData(preItemIndex, int(preItemNO)+1)
+		self.item_swap(self.first_selected_index, self.first_selected_index + 1)
 
-		self.listCtrl.SortListItems(0,1)
-		pass
+		# 选中转移
+		self.list_ctrl.Select(self.first_selected_index, on=0)  # 取消原来的选中
+		self.list_ctrl.Select(self.first_selected_index + 1)
 
-	def MovDownBtnOnClick( self, event ):
-		# TODO: Implement MovDownBtnOnClick
-		pass
-
-	def ExportBtnOnClick( self, event ):
+	def ExportBtnOnClick(self, event):
 		# TODO: Implement ExportBtnOnClick
 		pass
 
-	def ProjectWebBtnOnClick( self, event ):
+	def ProjectWebBtnOnClick(self, event):
 		# TODO: Implement ProjectWebBtnOnClick
 		pass
 
-	def LOG(self, string):
-		if self.LOGOUT:
-			print("[LOG] " + string)
-		return
+	def list_ctrl_on_selected(self, event):
+		self.first_selected_index = self.list_ctrl.GetFirstSelected()
+
+		if self.debug_log_level > 3:
+			print(
+				f"Selected Item Index: {self.first_selected_index}, \
+				Selected Item no: {self.item_list[self.first_selected_index]}")
+
+	def item_swap(self, item1_index, item2_index):
+		"""
+		交换物品函数。会交换物品在列表的序号，位置，并更新控件上的位置
+		:param item1_index: 交换的物品 1
+		:param item2_index: 交换的物品 2
+		:return:
+		"""
+
+		# 更新物品列表的序号
+		temp = self.item_list[item1_index]["no"]
+		self.item_list[item1_index]["no"] = self.item_list[item2_index]["no"]
+		self.item_list[item2_index]["no"] = temp
+
+		# 更新物品列表的位置
+		temp = self.item_list[item1_index]
+		self.item_list[item1_index] = self.item_list[item2_index]
+		self.item_list[item2_index] = temp
+
+		# 交换用户界面上的显示
+		self.list_load_item(self.item_list[item1_index], self.item_list[item1_index]["no"])
+		self.list_load_item(self.item_list[item2_index], self.item_list[item2_index]["no"])
+
+	def list_load_item(self, load_item, list_ctrl_index):
+		"""
+		把物品列表上的物品载入到用户界面的控件上
+		:param load_item: 载入的物品
+		:param list_ctrl_index: 载入在控件的行数
+		:return: 无
+		"""
+		self.list_ctrl.SetItem(list_ctrl_index, 0, str(load_item["no"]))
+		self.list_ctrl.SetItem(list_ctrl_index, 1, load_item["filename"])
+		self.list_ctrl.SetItem(list_ctrl_index, 2, load_item["start_time"])
+		self.list_ctrl.SetItem(list_ctrl_index, 3, load_item["end_time"])
+		self.list_ctrl.SetItem(list_ctrl_index, 4, load_item["path"])
+
+
+if __name__ == '__main__':
+	App = wx.App()
+	mainFrame = PureClipMainFrame(None)
+	mainFrame.Show(True)
+	App.MainLoop()
