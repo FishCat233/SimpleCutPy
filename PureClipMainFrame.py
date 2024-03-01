@@ -41,9 +41,13 @@ class PureClipMainFrame( PureClip.MainFrame ):
 			# col 2		startTime
 			# col 3		endTime
 			# col 4		path
+			# (NO, filename, startTime, endTime, path)
 
 			index = self.listCtrl.InsertItem(self.listCtrl.GetItemCount(),self.listCtrl.GetItemCount())
-			
+			data = (str(index), FileDlg.GetFilename(), "开头", "结尾", FileDlg.GetPath())
+			self.listCtrl.itemDataMap[index] = data
+			self.listCtrl.SetItemData(index, index)
+
 			self.listCtrl.SetItem(index, 0, str(index))
 			self.listCtrl.SetItem(index, 1, FileDlg.GetFilename())
 			self.listCtrl.SetItem(index, 2, "开头")
@@ -69,19 +73,36 @@ class PureClipMainFrame( PureClip.MainFrame ):
 		# run error with no causing, using the itemMap instead.
 		# preItemIndex = self.listCtrl.FindItem(0, str(int(selectedItemNO)-1), False)
 
-		preItemIndex = list(self.itemMap.keys())[list(self.itemMap.values()).index(int(selectedItemNO)-1)]
-		preItemNO = self.listCtrl.GetItem(preItemIndex, 0).GetText()
+		preItemIndex = -1
+		for i in self.itemMap:
+			if self.itemMap[i] == int(selectedItemNO) - 1:
+				preItemIndex = i
+				break
+
+		preItemNO = str(self.itemMap[i])
 
 		# self.LOG("SelectedItemIndex: {}, PreItemIndex: {}".format(selectedItemIndex, preItemIndex))
 		# self.LOG("SelectedItemNO: {}, PreItemNO: {}".format(selectedItemNO, preItemNO))
 		
 		self.listCtrl.SetItem(selectedItemIndex, 0, str(int(selectedItemNO) - 1))
 		self.listCtrl.SetItem(preItemIndex, 0, str(int(preItemNO) + 1))
+
+		tempVar = -1
+		for i in self.itemMap:
+			if self.itemMap[i] == int(selectedItemNO):
+				tempVar = i
+				break
+
+		self.listCtrl.itemDataMap[tempVar][0] = int(selectedItemNO) - 1
+		self.listCtrl.itemDataMap[preItemIndex][0] = int(selectedItemNO)
 		
 		self.itemMap[selectedItemIndex] = int(selectedItemNO) - 1
 		self.itemMap[preItemIndex] = int(preItemNO) + 1
 
-		self.listCtrl.Arrange()
+		self.listCtrl.SetItemData(selectedItemIndex, int(selectedItemNO)-1)
+		self.listCtrl.SetItemData(preItemIndex, int(preItemNO)+1)
+
+		self.listCtrl.SortListItems(0,1)
 		pass
 
 	def MovDownBtnOnClick( self, event ):
