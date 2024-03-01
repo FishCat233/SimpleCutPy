@@ -22,8 +22,18 @@ class PureClipMainFrame(PureClip.MainFrame):
 
 	# Handlers for MainFrame events.
 	def ApplyTimeButtonOnClick(self, event):
-		# TODO: Implement ApplyTimeButtonOnClick
-		pass
+		apply_time_item_index = self.first_selected_index
+
+		# 从控件上读取时间
+		start_time = self.StartTimeCtrl.GetValue()
+		end_time = self.EndTimeCtrl.GetValue()
+
+		# 设置物品列表的参数
+		self.item_list[apply_time_item_index]["start_time"] = start_time
+		self.item_list[apply_time_item_index]["end_time"] = end_time
+
+		# 更新界面
+		self.list_load_item(self.item_list[apply_time_item_index], apply_time_item_index)
 
 	def AddFileBtnOnClick(self, event):
 		# 文件选择对话框
@@ -74,8 +84,6 @@ class PureClipMainFrame(PureClip.MainFrame):
 
 			# 从删除项开始后面的每一个物品都重新加载
 			self.list_load_item(self.item_list[i], i)
-
-
 
 	def MovUpBtnOnClick(self, event):
 		if self.first_selected_index == -1:
