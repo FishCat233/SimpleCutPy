@@ -88,16 +88,16 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2.SetSizer( bSizer4 )
 		self.m_panel2.Layout()
 		bSizer4.Fit( self.m_panel2 )
-		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", True )
+		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", False )
 		self.m_panel3 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
 		bSizer6 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText4 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出文件名（带扩展名）：", wx.DefaultPosition, wx.Size( -1,25 ), 0 )
-		self.m_staticText4.Wrap( -1 )
+		self.export_ctrl = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出文件名（带扩展名）：", wx.DefaultPosition, wx.Size( -1,25 ), 0 )
+		self.export_ctrl.Wrap( -1 )
 
-		bSizer6.Add( self.m_staticText4, 0, wx.ALL, 5 )
+		bSizer6.Add( self.export_ctrl, 0, wx.ALL, 5 )
 
 		self.ExportNameCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 270,25 ), 0 )
 		self.ExportNameCtrl.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
@@ -107,7 +107,35 @@ class MainFrame ( wx.Frame ):
 
 		bSizer5.Add( bSizer6, 1, wx.EXPAND, 5 )
 
-		self.m_staticText7 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"帮助：\n1. 在不填写具体路径的情况下，会默认导出到当前路径。\n2. 没了", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer12 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText81 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出码率（Mbps）：", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText81.Wrap( -1 )
+
+		bSizer12.Add( self.m_staticText81, 0, wx.ALL, 5 )
+
+		self.ExportBitCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 295,-1 ), 0 )
+		bSizer12.Add( self.ExportBitCtrl, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer12, 1, wx.EXPAND, 5 )
+
+		bSizer101 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.export_ctrl1 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出路径：", wx.DefaultPosition, wx.Size( -1,25 ), 0 )
+		self.export_ctrl1.Wrap( -1 )
+
+		bSizer101.Add( self.export_ctrl1, 0, wx.ALL, 5 )
+
+		self.ExportPathCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 350,25 ), 0 )
+		self.ExportPathCtrl.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+
+		bSizer101.Add( self.ExportPathCtrl, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer101, 1, wx.EXPAND, 5 )
+
+		self.m_staticText7 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"帮助：\n1. 在不写导出文件名的情况下，会默认导出文件为”No Title - 日期时间.mp4\"\n2. 在不填写具体路径的情况下，会默认导出到当前路径。\n3. 默认的导出码率是 6 Mbps", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText7.Wrap( -1 )
 
 		bSizer5.Add( self.m_staticText7, 0, wx.ALL, 5 )
@@ -120,6 +148,21 @@ class MainFrame ( wx.Frame ):
 		self.m_panel3.Layout()
 		bSizer5.Fit( self.m_panel3 )
 		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", False )
+		self.m_panel41 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer13 = wx.BoxSizer( wx.VERTICAL )
+
+		self.IntroductionText = wx.StaticText( self.m_panel41, wx.ID_ANY, u"第一步，添加文件\n第二步，设置时间\n第三步，填写导出设置\n第四步，点击导出按钮\n\n如果不知道有些参数有什么用可以不填，应用会使用默认的设置\n\n小技巧：\n- 起止时间里的空格会被替换为“:”，例如“01 20\"会被替换为\"01:20\"\n- 起止时间如果是\"开头\"或者\"结尾\"，则不会对开始时间和结尾时间进行选择", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.IntroductionText.Wrap( -1 )
+
+		self.IntroductionText.SetMinSize( wx.Size( 460,290 ) )
+
+		bSizer13.Add( self.IntroductionText, 0, wx.ALL, 5 )
+
+
+		self.m_panel41.SetSizer( bSizer13 )
+		self.m_panel41.Layout()
+		bSizer13.Fit( self.m_panel41 )
+		self.m_notebook1.AddPage( self.m_panel41, u"使用说明", True )
 		self.m_panel4 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
@@ -146,6 +189,7 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.list_ctrl.Bind( wx.EVT_DROP_FILES, self.list_ctrl_on_drop_files )
 		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.list_ctrl_on_selected )
 		self.ApplyTimeBtn.Bind( wx.EVT_BUTTON, self.ApplyTimeButtonOnClick )
 		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
@@ -160,6 +204,9 @@ class MainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def list_ctrl_on_drop_files( self, event ):
+		event.Skip()
+
 	def list_ctrl_on_selected( self, event ):
 		event.Skip()
 

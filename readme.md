@@ -14,9 +14,8 @@ Pure Clip 是一款简单的影视素材剪辑器，它可以对素材（建议�
 ## 我该如何获取 Pure Clip
 获取 Pure Clip，可以在 release 页面中找到打包可供 windows 平台使用的可执行程序文件。
 
-很不幸的是，如果您是其他平台，您可能需要下载项目源代码自行进行打包。
-
-或者下载项目源代码后使用 python 运行 main.py
+对于其他平台，很不幸的是，您可能需要下载项目源代码进行一些修改——因为我在命令行生成的部分以 windows 平台为目标实现了。
+关于命令行生成的部分，您可以在 (PureClipMainFrame.py) PureClipMainFrame.ExportBtnOnClick() 的实现中找到。
 
 ---
 
