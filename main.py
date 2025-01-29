@@ -4,7 +4,7 @@ from SimpleCutMainFrame import *
 
 if __name__ == '__main__':
     App = wx.App()
-    mainFrame = PureClipMainFrame(debug_log_level=3)
+    mainFrame = PureClipMainFrame()
     mainFrame.Show(True)
     App.MainLoop()
 
