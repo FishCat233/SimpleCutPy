@@ -17,7 +17,7 @@ import wx.xrc
 class MainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Pure Clip", pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Simple Cut", pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.Size( 500,300 ), wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
@@ -135,19 +135,28 @@ class MainFrame ( wx.Frame ):
 
 		bSizer5.Add( bSizer101, 1, wx.EXPAND, 5 )
 
-		self.m_staticText7 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"帮助：\n1. 在不写导出文件名的情况下，会默认导出文件为”No Title - 日期时间.mp4\"\n2. 在不填写具体路径的情况下，会默认导出到当前路径。\n3. 默认的导出码率是 6 Mbps", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText7 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"帮助：\n1. 在不写导出文件名的情况下，会默认导出文件为”No Title - 日期时间.mp4\"\n2. 在不填写具体路径的情况下，会默认导出到第一个素材所在的目录。\n3. 默认的导出码率是 6 Mbps", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText7.Wrap( -1 )
 
 		bSizer5.Add( self.m_staticText7, 0, wx.ALL, 5 )
 
+		bSizer16 = wx.BoxSizer( wx.HORIZONTAL )
+
 		self.ExportBtn = wx.Button( self.m_panel3, wx.ID_ANY, u"导出", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer5.Add( self.ExportBtn, 0, wx.ALL, 5 )
+		bSizer16.Add( self.ExportBtn, 0, wx.ALL, 5 )
+
+		self.AmixCheckBox = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"多音轨合并", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.AmixCheckBox.SetValue(True)
+		bSizer16.Add( self.AmixCheckBox, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer16, 1, wx.EXPAND, 5 )
 
 
 		self.m_panel3.SetSizer( bSizer5 )
 		self.m_panel3.Layout()
 		bSizer5.Fit( self.m_panel3 )
-		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", False )
+		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", True )
 		self.m_panel41 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer13 = wx.BoxSizer( wx.VERTICAL )
 
@@ -162,7 +171,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel41.SetSizer( bSizer13 )
 		self.m_panel41.Layout()
 		bSizer13.Fit( self.m_panel41 )
-		self.m_notebook1.AddPage( self.m_panel41, u"使用说明", True )
+		self.m_notebook1.AddPage( self.m_panel41, u"使用说明", False )
 		self.m_panel4 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
