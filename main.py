@@ -1,10 +1,13 @@
 import sys
+import logging
 
 from SimpleCutMainFrame import *
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+
     App = wx.App()
-    mainFrame = PureClipMainFrame()
+    mainFrame = SimpleCutPyMainFrame()
     mainFrame.Show(True)
     App.MainLoop()
 
