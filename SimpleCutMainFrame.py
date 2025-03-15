@@ -7,6 +7,9 @@ import wx
 import SimpleCutPy
 import logging
 
+from command import concat_filter, merge_filestream_audio_channel
+from pymediainfo import MediaInfo
+
 
 class FileDropTarget(wx.FileDropTarget):
     def __init__(self, target):
@@ -20,6 +23,10 @@ class FileDropTarget(wx.FileDropTarget):
         return True
 
 
+# TODO: 重写配置的参数验证，建立物品类和导出配置 ExportConfig
+# TODO: 多线程剪辑
+
+
 # Implementing MainFrame
 class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
     def __init__(self, parent=None):
@@ -29,7 +36,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.SetDropTarget(FileDropTarget(self))
 
         self.first_selected_index = 0
-        self.item_list = []  # 列表是控件上的映射，列表的物品顺序就是控件上物品的顺序
+        self.item_list: list[dict] = []  # 列表是控件上的映射，列表的物品顺序就是控件上物品的顺序
 
         # list_ctrl 控件添加列
         self.list_ctrl.InsertColumn(0, "序号", width=40)
@@ -40,6 +47,18 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         # Handlers for MainFrame events.
 
+        # TODO: 参数初始化
+        self.ExportBitCtrl.SetValue("6")
+
+    @staticmethod
+    def format_time(time_string: str) -> str:
+        # 一些提升体验的小更改
+        # 将空格替换为 ":"
+        # 将全角 “：” 替换为半角 “:”
+        time_string = str.replace(time_string, " ", ":")
+        time_string = str.replace(time_string, "：", ":")
+        return time_string
+
     def ApplyTimeButtonOnClick(self, event):
         apply_time_item_index = self.first_selected_index
 
@@ -47,13 +66,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         start_time = self.StartTimeCtrl.GetValue()
         end_time = self.EndTimeCtrl.GetValue()
 
-        # 一些提升体验的小更改
-        # 将空格替换为 ":"
-        start_time = str.replace(start_time, " ", ":")
-        end_time = str.replace(end_time, " ", ":")
-        # 将全角 “：” 替换为半角 “:”
-        start_time = str.replace(start_time, "：", ":")
-        end_time = str.replace(end_time, "：", ":")
+        start_time = self.format_time(start_time)
+        end_time = self.format_time(end_time)
 
         # 设置物品列表的参数，如果为空就不更改
         if not start_time == '':
@@ -165,8 +179,9 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         # 导出命令
         console_command = 'ffmpeg '
-        filter_complex_param = ''
-        last_no = 0
+        filter_complex_string = '-filter_complex '
+        filter_complex_filters: list[str] = []
+        concat_inputs: list[str] = []
 
         for item in self.item_list:
             no = item["no"]
@@ -181,33 +196,44 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
                 end_time = "结尾"
 
             # 开始、结束时间以及路径的命令行参数生成
-            if start_time == "开头":
-                if end_time == "结尾":
-                    template = f'-i "{item_path}" '
-                else:
-                    template = f'-to {end_time} -i "{item_path}" '
-            elif end_time == "结尾":
-                template = f'-ss {start_time} -i "{item_path}" '
+            time_param = []
+            if start_time != "开头":
+                time_param.append(f'-ss {start_time}')
+            if end_time != "结尾":
+                time_param.append(f'-to {end_time}')
+            time_param.append(f'-i "{item_path}"')
+            time_string = " ".join(time_param)
+
+            console_command += time_string + " "
+
+            # concat_inputs 的参数生成
+            concat_inputs.append(f'{no}:v')
+
+            media_info = MediaInfo.parse(item_path)
+            audio_tracks_number = len(media_info.audio_tracks)
+            if audio_tracks_number > 0 and export_amix:
+                # 多音轨，合并
+                # amix_filter
+                filter_complex_filters.append(merge_filestream_audio_channel(f"{no}", audio_tracks_number, f"{no}a"))
+                concat_inputs.append(f'{no}a')
             else:
-                template = f'-ss {start_time} -to {end_time} -i "{item_path}" '
+                # 单音轨
+                concat_inputs.append(f'{no}:a')
 
-            console_command += template
+        # 使用 concat 滤镜
+        concat_string = concat_filter(concat_inputs, "v", "a")
+        filter_complex_filters.append(concat_string)
 
-            # -filter_complex 的参数生成
-            filter_complex_param += f'[{no}:0] [{no}:1] '
-            last_no = no
+        # 拼接 filter_complex 命令行参数，拼接滤镜
+        console_command += filter_complex_string + f'"{";".join(filter_complex_filters)}"'
 
-        # 如果只有一段素材，不使用 -filter_complex
-        if last_no != 0:
-            # 多段素材，使用 -filter_complex
-            # 拼接 -filter_complex 段
-            filter_complex_text = (
-                f"-filter_complex '{filter_complex_param}concat=n={last_no + 1}:v=1:a=1 [v] [a]' -map '[v]' -map '[a]' ")
-
-            console_command += filter_complex_text
+        console_command += ' -map "[v]" -map "[a]"'
 
         # 拼接全指令
-        console_command += f'"-b:v {export_mbps}M {export_name}"'
+        if not export_name.endswith(".mp4"):
+            export_name += ".mp4"
+
+        console_command += f' -b:v {export_mbps}M "{export_name}"'
 
         logging.info(f"导出命令：{console_command}")
 
@@ -247,8 +273,25 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         item_no = self.list_ctrl.GetItemCount()
         self.add_files(item_no, filename, path)
 
+    def OnStartTimeCtrlText(self, event):
+        first_selected_index = self.first_selected_index
+        self.item_list[first_selected_index]["start_time"] = self.format_time(self.StartTimeCtrl.GetValue())
+
+        self.list_load_item(self.item_list[first_selected_index], first_selected_index)
+
+    def OnEndTimeCtrlText(self, event):
+        first_selected_index = self.first_selected_index
+        self.item_list[first_selected_index]["end_time"] = self.format_time(self.EndTimeCtrl.GetValue())
+
+        self.list_load_item(self.item_list[first_selected_index], first_selected_index)
+
     def list_ctrl_on_selected(self, event):
-        self.first_selected_index = self.list_ctrl.GetFirstSelected()
+        first_selected_index = self.list_ctrl.GetFirstSelected()
+        self.first_selected_index = first_selected_index
+
+        # 获取选中的物品时间，同步到输入框
+        self.StartTimeCtrl.SetValue(self.item_list[first_selected_index]["start_time"])
+        self.EndTimeCtrl.SetValue(self.item_list[first_selected_index]["end_time"])
 
         logging.debug(
             f"Selected Item Index: {self.first_selected_index}, \

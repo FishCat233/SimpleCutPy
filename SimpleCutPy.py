@@ -200,6 +200,8 @@ class MainFrame ( wx.Frame ):
 		# Connect Events
 		self.list_ctrl.Bind( wx.EVT_DROP_FILES, self.list_ctrl_on_drop_files )
 		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.list_ctrl_on_selected )
+		self.StartTimeCtrl.Bind( wx.EVT_TEXT, self.OnStartTimeCtrlText )
+		self.EndTimeCtrl.Bind( wx.EVT_TEXT, self.OnEndTimeCtrlText )
 		self.ApplyTimeBtn.Bind( wx.EVT_BUTTON, self.ApplyTimeButtonOnClick )
 		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
 		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
@@ -217,6 +219,12 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def list_ctrl_on_selected( self, event ):
+		event.Skip()
+
+	def OnStartTimeCtrlText( self, event ):
+		event.Skip()
+
+	def OnEndTimeCtrlText( self, event ):
 		event.Skip()
 
 	def ApplyTimeButtonOnClick( self, event ):
