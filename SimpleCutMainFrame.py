@@ -13,8 +13,8 @@ import threading
 from command import concat_filter, merge_filestream_audio_channel
 from pymediainfo import MediaInfo
 
-
 VERSION = "0.2.0"
+
 
 class FileDropTarget(wx.FileDropTarget):
     def __init__(self, target):
@@ -186,12 +186,15 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         if export_name == '':
             export_name = str(time.strftime('No Title %Y.%m.%d - %H.%M.output.mp4'))
 
-        # 导出路径不为空则更改工作路径
+        # 导出路径不为空则更改导出目录
         if not export_path == '':
-            os.chdir(export_path)
+            # os.chdir(export_path)
+            export_name = export_path + '/' + export_name
         else:
             # 默认使用第一个文件的目录
-            os.chdir(os.path.dirname(self.item_list[0]["path"]))
+            # os.chdir(os.path.dirname(self.item_list[0]["path"]))
+            path = os.path.dirname(self.item_list[0]["path"])
+            export_name = path + '/' + export_name
 
         threading.Thread(target=self.export_videofile, args=(export_amix, export_mbps, export_name)).start()
         self.ExportBtn.Disable()
@@ -254,14 +257,13 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         # 执行命令
         try:
-            subprocess.run(console_command, shell=False, check=True)
+            subprocess.run(console_command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
 
             # 完成命令，发送事件
             wx.CallAfter(self.on_export_done, ExportMessage(ExportMessageState.SUCCESS, "导出完成"))
         except subprocess.CalledProcessError as e:
             # 导出失败，发送事件
             wx.CallAfter(self.on_export_done, ExportMessage(ExportMessageState.ERROR, e))
-
 
     def ProjectWebBtnOnClick(self, event):
         # TODO: Implement ProjectWebBtnOnClick
