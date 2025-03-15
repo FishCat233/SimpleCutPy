@@ -124,7 +124,7 @@
             <object class="notebookpage" expanded="true">
               <property name="bitmap"></property>
               <property name="label">素材设置</property>
-              <property name="select">1</property>
+              <property name="select">0</property>
               <object class="wxPanel" expanded="true">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
@@ -1745,7 +1745,7 @@
             <object class="notebookpage" expanded="true">
               <property name="bitmap"></property>
               <property name="label">关于</property>
-              <property name="select">0</property>
+              <property name="select">1</property>
               <object class="wxPanel" expanded="true">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
@@ -1836,7 +1836,7 @@
                       <property name="gripper">0</property>
                       <property name="hidden">0</property>
                       <property name="id">wxID_ANY</property>
-                      <property name="label">关于 Pure Clip：&#x0A;一个用于进行简单剪切工作的开源迷你剪辑软件。&#x0A;&#x0A;项目地址：&#x0A;&#x0A;--FishCat233&#x0A;2024.2.27&#x0A;&#x0A;Pure Clip 版本号&#x0A;0.1</property>
+                      <property name="label">关于 Pure Clip：&#x0A;一个用于进行简单剪切工作的开源迷你剪辑软件。&#x0A;&#x0A;项目地址：&#x0A;&#x0A;--FishCat233&#x0A;2024.2.27&#x0A;&#x0A;Pure Clip 版本号&#x0A;0.2.0</property>
                       <property name="markup">0</property>
                       <property name="max_size"></property>
                       <property name="maximize_button">0</property>

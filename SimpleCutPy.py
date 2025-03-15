@@ -88,7 +88,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2.SetSizer( bSizer4 )
 		self.m_panel2.Layout()
 		bSizer4.Fit( self.m_panel2 )
-		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", True )
+		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", False )
 		self.m_panel3 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
@@ -175,7 +175,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel4 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_staticText6 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"关于 Pure Clip：\n一个用于进行简单剪切工作的开源迷你剪辑软件。\n\n项目地址：\n\n--FishCat233\n2024.2.27\n\nPure Clip 版本号\n0.1", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"关于 Pure Clip：\n一个用于进行简单剪切工作的开源迷你剪辑软件。\n\n项目地址：\n\n--FishCat233\n2024.2.27\n\nPure Clip 版本号\n0.2.0", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText6.Wrap( -1 )
 
 		bSizer8.Add( self.m_staticText6, 0, wx.ALL, 5 )
@@ -187,7 +187,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel4.SetSizer( bSizer8 )
 		self.m_panel4.Layout()
 		bSizer8.Fit( self.m_panel4 )
-		self.m_notebook1.AddPage( self.m_panel4, u"关于", False )
+		self.m_notebook1.AddPage( self.m_panel4, u"关于", True )
 
 		bSizer3.Add( self.m_notebook1, 1, wx.EXPAND |wx.ALL, 5 )
 
