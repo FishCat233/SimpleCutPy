@@ -61,11 +61,6 @@ class MainFrame ( wx.Frame ):
 
 		bSizer81.Add( bSizer10, 1, wx.EXPAND, 5 )
 
-		self.ApplyTimeBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"应用时间", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.ApplyTimeBtn.Hide()
-
-		bSizer81.Add( self.ApplyTimeBtn, 0, wx.ALL, 5 )
-
 
 		bSizer4.Add( bSizer81, 1, wx.EXPAND, 5 )
 
@@ -177,10 +172,15 @@ class MainFrame ( wx.Frame ):
 		self.m_panel4 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_staticText6 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"关于 Pure Clip：\n一个用于进行简单剪切工作的开源迷你剪辑软件。\n\n项目地址：\n\n--FishCat233\n2024.2.27\n\nPure Clip 版本号\n0.2.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"关于 Simple Cut Py：\n一个用于进行简单剪切工作的开源迷你剪辑软件。\n\n项目地址：\n\n--FishCat233\n2024.2.27", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText6.Wrap( -1 )
 
 		bSizer8.Add( self.m_staticText6, 0, wx.ALL, 5 )
+
+		self.VersionText = wx.StaticText( self.m_panel4, wx.ID_ANY, u"Simple Cut Py 版本号\n{VERSION}", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.VersionText.Wrap( -1 )
+
+		bSizer8.Add( self.VersionText, 0, wx.ALL, 5 )
 
 		self.ProjectWebBtn = wx.Button( self.m_panel4, wx.ID_ANY, u"访问项目", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer8.Add( self.ProjectWebBtn, 0, wx.ALL, 5 )
@@ -204,7 +204,6 @@ class MainFrame ( wx.Frame ):
 		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.list_ctrl_on_selected )
 		self.StartTimeCtrl.Bind( wx.EVT_TEXT, self.OnStartTimeCtrlText )
 		self.EndTimeCtrl.Bind( wx.EVT_TEXT, self.OnEndTimeCtrlText )
-		self.ApplyTimeBtn.Bind( wx.EVT_BUTTON, self.ApplyTimeButtonOnClick )
 		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
 		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
 		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.MovUpBtnOnClick )
@@ -227,9 +226,6 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def OnEndTimeCtrlText( self, event ):
-		event.Skip()
-
-	def ApplyTimeButtonOnClick( self, event ):
 		event.Skip()
 
 	def AddFileBtnOnClick( self, event ):

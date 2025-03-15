@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['main.py'],
-    pathex=['.venv/Lib/site-packages'],
+    ['src/main.py'],
+    pathex=['src', '.venv/Lib/site-packages'],
     binaries=[],
     datas=[],
-    hiddenimports=['wx'],
+    hiddenimports=['wx', 'src'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
