@@ -2,7 +2,6 @@
 import os
 import subprocess
 import time
-from enum import Enum
 
 import wx
 
@@ -11,6 +10,8 @@ import logging
 import threading
 
 from command import concat_filter, merge_filestream_audio_channel
+from message import ExportMessage, WorkStateEnum
+
 from pymediainfo import MediaInfo
 
 VERSION = "0.2.0"
@@ -29,16 +30,6 @@ class FileDropTarget(wx.FileDropTarget):
 
 
 # TODO: 重写配置的参数验证，建立物品类和导出配置 ExportConfig
-
-class ExportMessageState(Enum):
-    SUCCESS = "成功"
-    ERROR = "错误"
-
-
-class ExportMessage:
-    def __init__(self, state: ExportMessageState, message: any):
-        self.state = state
-        self.message = message
 
 
 # Implementing MainFrame
@@ -192,16 +183,15 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             export_name = export_path + '/' + export_name
         else:
             # 默认使用第一个文件的目录
-            # os.chdir(os.path.dirname(self.item_list[0]["path"]))
             path = os.path.dirname(self.item_list[0]["path"])
             export_name = path + '/' + export_name
 
-        threading.Thread(target=self.export_videofile, args=(export_amix, export_mbps, export_name)).start()
+        threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, export_name)).start()
         self.ExportBtn.Disable()
 
         return
 
-    def export_videofile(self, export_amix, export_mbps, export_name):
+    def export_video_file(self, export_amix, export_mbps, export_name):
         # 导出命令
         console_command = 'ffmpeg '
         filter_complex_string = '-filter_complex '
@@ -260,10 +250,10 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             subprocess.run(console_command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
 
             # 完成命令，发送事件
-            wx.CallAfter(self.on_export_done, ExportMessage(ExportMessageState.SUCCESS, "导出完成"))
+            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.SUCCESS, "导出完成"))
         except subprocess.CalledProcessError as e:
             # 导出失败，发送事件
-            wx.CallAfter(self.on_export_done, ExportMessage(ExportMessageState.ERROR, e))
+            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.FAIL, e))
 
     def ProjectWebBtnOnClick(self, event):
         # TODO: Implement ProjectWebBtnOnClick
@@ -299,14 +289,28 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.add_files(item_no, filename, path)
 
     def OnStartTimeCtrlText(self, event):
+        """修改开始时间输入框的时候修改itemlist的start_time"""
         first_selected_index = self.first_selected_index
-        self.item_list[first_selected_index]["start_time"] = self.format_time(self.StartTimeCtrl.GetValue())
+        value = self.StartTimeCtrl.GetValue()
+
+        if value == '':
+            value = "开头"
+            self.item_list[first_selected_index]["start_time"] = value
+        else:
+            self.item_list[first_selected_index]["start_time"] = self.format_time(value)
 
         self.list_load_item(self.item_list[first_selected_index], first_selected_index)
 
     def OnEndTimeCtrlText(self, event):
+        """修改结束时间输入框的时候修改itemlist的end_time"""
         first_selected_index = self.first_selected_index
-        self.item_list[first_selected_index]["end_time"] = self.format_time(self.EndTimeCtrl.GetValue())
+        value = self.EndTimeCtrl.GetValue()
+
+        if value == '':
+            value = "结尾"
+            self.item_list[first_selected_index]["end_time"] = value
+        else:
+            self.item_list[first_selected_index]["end_time"] = self.format_time(value)
 
         self.list_load_item(self.item_list[first_selected_index], first_selected_index)
 
@@ -357,11 +361,19 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.SetItem(list_ctrl_index, 3, load_item["end_time"])
         self.list_ctrl.SetItem(list_ctrl_index, 4, load_item["path"])
 
+    def list_load_all_item(self):
+        """
+        把物品列表上的所有物品载入到用户界面的控件上
+        :return:
+        """
+        for item in self.item_list:
+            self.list_load_item(item, item["no"])
+
     def on_export_done(self, msg: ExportMessage):
         logging.debug(f"Export Done: {msg}")
-        if msg.state == ExportMessageState.SUCCESS:
+        if msg.state == WorkStateEnum.SUCCESS:
             wx.MessageBox("导出成功", "提示", wx.OK | wx.ICON_INFORMATION)
-        elif msg.state == ExportMessageState.ERROR:
+        elif msg.state == WorkStateEnum.FAIL:
             logging.error(f"Export Error: {msg.message}")
             wx.MessageBox("导出失败", "提示", wx.OK | wx.ICON_INFORMATION)
 

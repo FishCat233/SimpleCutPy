@@ -1,5 +1,6 @@
-import time
-from abc import ABC, abstractmethod
+"""
+命令生成
+"""
 
 
 def concat_filter(input: list[str], output_video_name: str, output_audio_name: str, v: int = 1, a: int = 1) -> str:

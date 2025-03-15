@@ -62,6 +62,8 @@ class MainFrame ( wx.Frame ):
 		bSizer81.Add( bSizer10, 1, wx.EXPAND, 5 )
 
 		self.ApplyTimeBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"应用时间", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ApplyTimeBtn.Hide()
+
 		bSizer81.Add( self.ApplyTimeBtn, 0, wx.ALL, 5 )
 
 
