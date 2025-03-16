@@ -34,10 +34,14 @@ class VideoModel:
     @staticmethod
     def format_time(time_string: str) -> str:
         # 一些提升体验的小更改
+        # 除去两侧空格
+        time_string = time_string.strip()
+
         # 将空格替换为 ":"
         # 将全角 “：” 替换为半角 “:”
         time_string = str.replace(time_string, " ", ":")
         time_string = str.replace(time_string, "：", ":")
+
         return time_string
 
 

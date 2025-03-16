@@ -16,7 +16,7 @@ from pymediainfo import MediaInfo
 
 from src.model import VideoSequenceModel, VideoModel
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 
 class FileDropTarget(wx.FileDropTarget):
