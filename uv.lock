@@ -22,21 +22,12 @@ wheels = [
 ]
 
 [[package]]
-name = "pypubsub"
-version = "4.0.3"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/41/a0aceb552d8ec63bb1e8223d130f9dd0f736470036d75d708183b104a2cb/Pypubsub-4.0.3-py3-none-any.whl", hash = "sha256:7f716bae9388afe01ff82b264ba8a96a8ae78b42bb1f114f2716ca8f9e404e2a", size = 61368 },
-]
-
-[[package]]
 name = "simplecutpy"
-version = "0.1.0"
+version = "0.3.0"
 source = { virtual = "." }
 dependencies = [
     { name = "logging" },
     { name = "pymediainfo" },
-    { name = "pypubsub" },
     { name = "wxpython" },
 ]
 
@@ -44,7 +35,6 @@ dependencies = [
 requires-dist = [
     { name = "logging", specifier = ">=0.4.9.6" },
     { name = "pymediainfo", specifier = ">=7.0.1" },
-    { name = "pypubsub", specifier = ">=4.0.3" },
     { name = "wxpython", specifier = ">=4.2.2" },
 ]
 

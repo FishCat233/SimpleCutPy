@@ -7,6 +7,5 @@ requires-python = "==3.12.*"
 dependencies = [
     "logging>=0.4.9.6",
     "pymediainfo>=7.0.1",
-    "pypubsub>=4.0.3",
     "wxpython>=4.2.2",
 ]
