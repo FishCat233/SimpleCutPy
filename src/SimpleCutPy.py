@@ -78,6 +78,9 @@ class MainFrame ( wx.Frame ):
 		self.MovDownBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"向下移动", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.MovDownBtn, 0, wx.ALL, 5 )
 
+		self.ClearAllBtn = wx.Button( self.m_panel2, wx.ID_ANY, u"清除全部", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.ClearAllBtn, 0, wx.ALL, 5 )
+
 
 		bSizer4.Add( bSizer7, 1, wx.EXPAND, 5 )
 
@@ -208,6 +211,7 @@ class MainFrame ( wx.Frame ):
 		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
 		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.MovUpBtnOnClick )
 		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.MovDownBtnOnClick )
+		self.ClearAllBtn.Bind( wx.EVT_BUTTON, self.ClearAllBtnClick )
 		self.ExportBtn.Bind( wx.EVT_BUTTON, self.ExportBtnOnClick )
 		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.ProjectWebBtnOnClick )
 
@@ -238,6 +242,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def MovDownBtnOnClick( self, event ):
+		event.Skip()
+
+	def ClearAllBtnClick( self, event ):
 		event.Skip()
 
 	def ExportBtnOnClick( self, event ):

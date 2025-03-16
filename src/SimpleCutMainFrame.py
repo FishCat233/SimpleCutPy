@@ -16,7 +16,7 @@ from pymediainfo import MediaInfo
 
 from src.model import VideoSequenceModel, VideoModel
 
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -281,6 +281,11 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         item_no = self.list_ctrl.GetItemCount()
         self.add_files(item_no, filename, path)
 
+    def ClearAllBtnClick(self, event):
+        self.video_sequence.clear_all()
+        logging.debug(f"clear all video: {self.video_sequence.video_list}")
+        self.update_sequence_model()
+
     def OnStartTimeCtrlText(self, event):
         """修改开始时间输入框的时候修改itemlist的start_time"""
         index = self.first_selected_index
@@ -312,9 +317,11 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
                     Selected Item no: {self.video_sequence[index]}")
 
     def update_video_model_item(self, no):
+        """重载物品"""
         self.load_video_model_item(self.video_sequence[no], no)
 
     def update_sequence_model(self):
+        """重载序列"""
         self.load_sequence_model(self.video_sequence)
 
     def load_video_model_item(self, load_item: VideoModel, list_ctrl_index: int):
@@ -338,7 +345,13 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         把物品列表上的所有物品载入到用户界面的控件上
         :return:
         """
+        # 清除控件
+        self.list_ctrl.DeleteAllItems()
+
+        # 重新载入
         for index, item in enumerate(sequence.video_list):
+            logging.debug(f"load item: {index},{item}")
+            self.list_ctrl.InsertItem(index, index)
             self.load_video_model_item(item, index)
 
     def on_export_done(self, msg: ExportMessage):

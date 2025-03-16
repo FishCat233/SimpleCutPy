@@ -74,3 +74,6 @@ class VideoSequenceModel:
 
     def swap_item(self, no1: int, no2: int):
         self.video_list[no1], self.video_list[no2] = self.video_list[no2], self.video_list[no1]
+
+    def clear_all(self):
+        self.video_list = []
