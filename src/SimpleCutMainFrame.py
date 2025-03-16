@@ -16,7 +16,7 @@ from pymediainfo import MediaInfo
 
 from src.model import VideoSequenceModel, VideoModel
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -108,7 +108,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             return  # 如果没有选中
 
         if index >= len(self.video_sequence):
-            return # 如果超出范围
+            return  # 如果超出范围
 
         self.video_sequence.pop_video(index)
 
@@ -203,7 +203,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         filter_complex_string = '-filter_complex '
         filter_complex_filters: list[str] = []
         concat_inputs: list[str] = []
-        for index, item in enumerate(self.video_sequence):
+        for index, item in enumerate(self.video_sequence.video_list):
             no = index
             start_time = item.start_time
             end_time = item.end_time
@@ -338,7 +338,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         把物品列表上的所有物品载入到用户界面的控件上
         :return:
         """
-        for index, item in enumerate(sequence):
+        for index, item in enumerate(sequence.video_list):
             self.load_video_model_item(item, index)
 
     def on_export_done(self, msg: ExportMessage):
