@@ -16,7 +16,7 @@ from pymediainfo import MediaInfo
 
 from src.model import VideoSequenceModel, VideoModel
 
-VERSION = "0.3.3"
+VERSION = "0.3.4"
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -61,16 +61,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         # TODO: 参数初始化
         self.ExportBitCtrl.SetValue("6")
 
-    @staticmethod
-    def format_time(time_string: str) -> str:
-        # 一些提升体验的小更改
-        # 将空格替换为 ":"
-        # 将全角 “：” 替换为半角 “:”
-        time_string = str.replace(time_string, " ", ":")
-        time_string = str.replace(time_string, "：", ":")
-        return time_string
-
-    def AddFileBtnOnClick(self, event):
+    def on_add_file_button_click(self, event):
         # 文件选择对话框
         file_dlg = wx.FileDialog(self, u"选择导入的文件", "", "", "*.mp4", wx.FD_OPEN)
         if file_dlg.ShowModal() == wx.ID_OK:
@@ -100,7 +91,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             item_no = self.list_ctrl.GetItemCount()
             self.add_files(item_no, filename, filename)
 
-    def RemoveBtnOnClick(self, event):
+    def on_remove_file_button_click(self, event):
         # 删除列表中的项
         index = self.first_selected_index
 
@@ -127,7 +118,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         # 选中 index
         self.list_ctrl.Select(index)
 
-    def MovUpBtnOnClick(self, event):
+    def on_move_up_file_button_click(self, event):
         value = self.first_selected_index
 
         if value == -1:
@@ -145,7 +136,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.Select(self.first_selected_index, on=0)  # 取消原来的选中
         self.list_ctrl.Select(self.first_selected_index - 1)
 
-    def MovDownBtnOnClick(self, event):
+    def on_move_down_file_button_click(self, event):
         value = self.first_selected_index
 
         if value == -1:
@@ -164,7 +155,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.Select(self.first_selected_index, on=0)  # 取消原来的选中
         self.list_ctrl.Select(self.first_selected_index + 1)
 
-    def ExportBtnOnClick(self, event):
+    def on_export_button_click(self, event):
         # TODO: 加了码率设置的功能，别忘了测试
         # TODO: item list 重写
 
@@ -255,7 +246,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             # 导出失败，发送事件
             wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.FAIL, e))
 
-    def ProjectWebBtnOnClick(self, event):
+    def on_open_project_website_button_click(self, event):
         # TODO: Implement ProjectWebBtnOnClick
         pass
 
@@ -281,12 +272,12 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         item_no = self.list_ctrl.GetItemCount()
         self.add_files(item_no, filename, path)
 
-    def ClearAllBtnClick(self, event):
+    def on_clear_all_button_click(self, event):
         self.video_sequence.clear_all()
         logging.debug(f"clear all video: {self.video_sequence.video_list}")
         self.update_sequence_model()
 
-    def OnStartTimeCtrlText(self, event):
+    def on_start_time_ctrl_text(self, event):
         """修改开始时间输入框的时候修改itemlist的start_time"""
         index = self.first_selected_index
         value = self.StartTimeCtrl.GetValue()
@@ -295,7 +286,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         self.update_video_model_item(index)
 
-    def OnEndTimeCtrlText(self, event):
+    def on_end_time_ctrl_text(self, event):
         """修改结束时间输入框的时候修改itemlist的end_time"""
         index = self.first_selected_index
         value = self.EndTimeCtrl.GetValue()
@@ -304,7 +295,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         self.update_video_model_item(index)
 
-    def list_ctrl_on_selected(self, event):
+    def on_list_item_selected(self, event):
         index = self.list_ctrl.GetFirstSelected()
         self.first_selected_index = index
 

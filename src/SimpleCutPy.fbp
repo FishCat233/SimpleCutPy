@@ -244,7 +244,7 @@
                       <property name="window_name"></property>
                       <property name="window_style"></property>
                       <event name="OnDropFiles">list_ctrl_on_drop_files</event>
-                      <event name="OnListItemSelected">list_ctrl_on_selected</event>
+                      <event name="OnListItemSelected">on_list_item_selected</event>
                     </object>
                   </object>
                   <object class="sizeritem" expanded="true">
@@ -390,7 +390,7 @@
                               <property name="window_extra_style"></property>
                               <property name="window_name"></property>
                               <property name="window_style"></property>
-                              <event name="OnText">OnStartTimeCtrlText</event>
+                              <event name="OnText">on_start_time_ctrl_text</event>
                             </object>
                           </object>
                         </object>
@@ -529,7 +529,7 @@
                               <property name="window_extra_style"></property>
                               <property name="window_name"></property>
                               <property name="window_style"></property>
-                              <event name="OnText">OnEndTimeCtrlText</event>
+                              <event name="OnText">on_end_time_ctrl_text</event>
                             </object>
                           </object>
                         </object>
@@ -617,7 +617,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">AddFileBtnOnClick</event>
+                          <event name="OnButtonClick">on_add_file_button_click</event>
                         </object>
                       </object>
                       <object class="sizeritem" expanded="false">
@@ -692,7 +692,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">RemoveBtnOnClick</event>
+                          <event name="OnButtonClick">on_remove_file_button_click</event>
                         </object>
                       </object>
                       <object class="sizeritem" expanded="false">
@@ -767,7 +767,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">MovUpBtnOnClick</event>
+                          <event name="OnButtonClick">on_move_up_file_button_click</event>
                         </object>
                       </object>
                       <object class="sizeritem" expanded="false">
@@ -842,7 +842,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">MovDownBtnOnClick</event>
+                          <event name="OnButtonClick">on_move_down_file_button_click</event>
                         </object>
                       </object>
                       <object class="sizeritem" expanded="true">
@@ -917,7 +917,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">ClearAllBtnClick</event>
+                          <event name="OnButtonClick">on_clear_all_button_click</event>
                         </object>
                       </object>
                     </object>
@@ -1543,7 +1543,7 @@
                           <property name="window_extra_style"></property>
                           <property name="window_name"></property>
                           <property name="window_style"></property>
-                          <event name="OnButtonClick">ExportBtnOnClick</event>
+                          <event name="OnButtonClick">on_export_button_click</event>
                         </object>
                       </object>
                       <object class="sizeritem" expanded="true">
@@ -1999,7 +1999,7 @@
                       <property name="window_extra_style"></property>
                       <property name="window_name"></property>
                       <property name="window_style"></property>
-                      <event name="OnButtonClick">ProjectWebBtnOnClick</event>
+                      <event name="OnButtonClick">on_open_project_website_button_click</event>
                     </object>
                   </object>
                 </object>

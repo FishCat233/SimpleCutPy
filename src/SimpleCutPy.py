@@ -204,16 +204,16 @@ class MainFrame ( wx.Frame ):
 
 		# Connect Events
 		self.list_ctrl.Bind( wx.EVT_DROP_FILES, self.list_ctrl_on_drop_files )
-		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.list_ctrl_on_selected )
-		self.StartTimeCtrl.Bind( wx.EVT_TEXT, self.OnStartTimeCtrlText )
-		self.EndTimeCtrl.Bind( wx.EVT_TEXT, self.OnEndTimeCtrlText )
-		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.AddFileBtnOnClick )
-		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.RemoveBtnOnClick )
-		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.MovUpBtnOnClick )
-		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.MovDownBtnOnClick )
-		self.ClearAllBtn.Bind( wx.EVT_BUTTON, self.ClearAllBtnClick )
-		self.ExportBtn.Bind( wx.EVT_BUTTON, self.ExportBtnOnClick )
-		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.ProjectWebBtnOnClick )
+		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected )
+		self.StartTimeCtrl.Bind( wx.EVT_TEXT, self.on_start_time_ctrl_text )
+		self.EndTimeCtrl.Bind( wx.EVT_TEXT, self.on_end_time_ctrl_text )
+		self.AddFileBtn.Bind( wx.EVT_BUTTON, self.on_add_file_button_click )
+		self.RemoveBtn.Bind( wx.EVT_BUTTON, self.on_remove_file_button_click )
+		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.on_move_up_file_button_click )
+		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.on_move_down_file_button_click )
+		self.ClearAllBtn.Bind( wx.EVT_BUTTON, self.on_clear_all_button_click )
+		self.ExportBtn.Bind( wx.EVT_BUTTON, self.on_export_button_click )
+		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.on_open_project_website_button_click )
 
 	def __del__( self ):
 		pass
@@ -223,34 +223,34 @@ class MainFrame ( wx.Frame ):
 	def list_ctrl_on_drop_files( self, event ):
 		event.Skip()
 
-	def list_ctrl_on_selected( self, event ):
+	def on_list_item_selected( self, event ):
 		event.Skip()
 
-	def OnStartTimeCtrlText( self, event ):
+	def on_start_time_ctrl_text( self, event ):
 		event.Skip()
 
-	def OnEndTimeCtrlText( self, event ):
+	def on_end_time_ctrl_text( self, event ):
 		event.Skip()
 
-	def AddFileBtnOnClick( self, event ):
+	def on_add_file_button_click( self, event ):
 		event.Skip()
 
-	def RemoveBtnOnClick( self, event ):
+	def on_remove_file_button_click( self, event ):
 		event.Skip()
 
-	def MovUpBtnOnClick( self, event ):
+	def on_move_up_file_button_click( self, event ):
 		event.Skip()
 
-	def MovDownBtnOnClick( self, event ):
+	def on_move_down_file_button_click( self, event ):
 		event.Skip()
 
-	def ClearAllBtnClick( self, event ):
+	def on_clear_all_button_click( self, event ):
 		event.Skip()
 
-	def ExportBtnOnClick( self, event ):
+	def on_export_button_click( self, event ):
 		event.Skip()
 
-	def ProjectWebBtnOnClick( self, event ):
+	def on_open_project_website_button_click( self, event ):
 		event.Skip()
 
 
