@@ -16,7 +16,7 @@ from pymediainfo import MediaInfo
 
 from src.model import VideoSequenceModel, VideoModel
 
-VERSION = "0.3.4"
+VERSION = "0.3.5"
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -231,8 +231,9 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         console_command += filter_complex_string + f'"{";".join(filter_complex_filters)}"'
         console_command += ' -map "[v]" -map "[a]"'
         # 拼接全指令
-        if not export_name.endswith(".mp4"):
-            export_name += ".mp4"
+        if os.path.split(export_name)[1] == '':
+            export_name += '.mp4'
+
         console_command += f' -b:v {export_mbps}M "{export_name}"'
         logging.info(f"导出命令：{console_command}")
 
