@@ -61,6 +61,9 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         # TODO: 参数初始化
         self.ExportBitCtrl.SetValue("6")
 
+        # 线程字典
+        self.working_thread: dict[str, threading.Thread] = {}
+
     def on_add_file_button_click(self, event):
         # 文件选择对话框
         file_dlg = wx.FileDialog(self, u"选择导入的文件", "", "", "*.mp4", wx.FD_OPEN)
@@ -164,6 +167,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         export_path = self.ExportPathCtrl.GetValue()
         export_mbps = self.ExportBitCtrl.GetValue()
         export_amix = self.AmixCheckBox.IsChecked()
+        export_double_output = self.DoubleOutputBox.IsChecked()
 
         # 导出码率设置为空则使用 6 mbps
         if export_mbps == '':
@@ -182,7 +186,26 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             path = os.path.dirname(self.video_sequence[0].path)
             export_name = path + '/' + export_name
 
-        threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, export_name)).start()
+        paths = [export_name]
+
+        if export_double_output:
+            # 如果导出双倍输出，则添加后缀
+            paths.append(export_name + '_WITHAMIX')
+
+        # 如果没有后缀 添加类型后缀
+        for it in paths:
+            if '.' not in export_name:
+                it += '.mp4'
+
+        # 导出
+        for it in paths:
+            if '_WITHAMIX' in paths:
+                t = threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, it))
+            else:
+                t = threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, export_name))
+            self.working_thread[it] = t
+            t.start()
+
         self.ExportBtn.Disable()
 
         return
@@ -242,7 +265,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             subprocess.run(console_command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
 
             # 完成命令，发送事件
-            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.SUCCESS, "导出完成"))
+            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.SUCCESS, "导出完成", export_name))
         except subprocess.CalledProcessError as e:
             # 导出失败，发送事件
             wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.FAIL, e))
@@ -350,11 +373,15 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         logging.debug(f"Export Done: {msg}")
         if msg.state == WorkStateEnum.SUCCESS:
             wx.MessageBox("导出成功", "提示", wx.OK | wx.ICON_INFORMATION)
+            if msg.export_name != '':
+                self.working_thread.pop(msg.export_name)
         elif msg.state == WorkStateEnum.FAIL:
             logging.error(f"Export Error: {msg.message}")
             wx.MessageBox("导出失败", "提示", wx.OK | wx.ICON_INFORMATION)
 
-        self.ExportBtn.Enable()
+        if len(self.working_thread) == 0:
+            self.ExportBtn.Enable()
+
         return
 
 

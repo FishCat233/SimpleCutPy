@@ -10,6 +10,7 @@ class WorkStateEnum(Enum):
 
 
 class ExportMessage:
-    def __init__(self, state: WorkStateEnum, message: any):
+    def __init__(self, state: WorkStateEnum, message: any, export_name = ''):
         self.state = state
         self.message = message
+        self.export_name = export_name

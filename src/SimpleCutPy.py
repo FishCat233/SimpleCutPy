@@ -88,7 +88,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2.SetSizer( bSizer4 )
 		self.m_panel2.Layout()
 		bSizer4.Fit( self.m_panel2 )
-		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", True )
+		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", False )
 		self.m_panel3 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
@@ -149,6 +149,9 @@ class MainFrame ( wx.Frame ):
 		self.AmixCheckBox.SetValue(True)
 		bSizer16.Add( self.AmixCheckBox, 0, wx.ALL, 5 )
 
+		self.DoubleOutputBox = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"双份输出", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer16.Add( self.DoubleOutputBox, 0, wx.ALL, 5 )
+
 
 		bSizer5.Add( bSizer16, 1, wx.EXPAND, 5 )
 
@@ -156,7 +159,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel3.SetSizer( bSizer5 )
 		self.m_panel3.Layout()
 		bSizer5.Fit( self.m_panel3 )
-		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", False )
+		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", True )
 		self.m_panel41 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer13 = wx.BoxSizer( wx.VERTICAL )
 
