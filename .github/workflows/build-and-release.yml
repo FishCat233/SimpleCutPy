@@ -1,5 +1,8 @@
 name: Build and Release SimpleCutPy
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
