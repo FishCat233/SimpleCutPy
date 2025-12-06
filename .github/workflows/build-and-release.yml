@@ -56,7 +56,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: SimpleCutPy-build
-          path: dist/SimpleCutPy/
+          path: dist/
 
       - name: Create zip archive
         run: |
