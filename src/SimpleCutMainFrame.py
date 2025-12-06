@@ -193,21 +193,29 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         paths = [export_name]
 
-        if export_double_output:
-            # 如果导出双倍输出，则添加后缀
-            paths.append(export_name + '_WITHAMIX')
-
         # 如果没有后缀 添加类型后缀
-        for it in paths:
-            if '.' not in export_name:
-                it += '.mp4'
+        if '.' not in export_name:
+            export_name += '.mp4'
+
+        # 获取后缀
+        path_without_suffix, suffix = os.path.splitext(export_name)
+
+        if export_double_output:
+            # 如果导出双倍输出，则给文件名添加后缀
+            paths.append(path_without_suffix + '_WITHAMIX' + suffix)
 
         # 导出
         for it in paths:
-            if '_WITHAMIX' in paths:
-                t = threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, it))
+            # 第一个输出文件使用用户设置的amix状态
+            # 第二个输出文件（带_WITHAMIX后缀）强制使用amix=True
+            if '_WITHAMIX' in it:
+                # 对于带_WITHAMIX后缀的输出，强制使用多音轨合并
+                t = threading.Thread(
+                    target=self.export_video_file, args=(True, export_mbps, it))
             else:
-                t = threading.Thread(target=self.export_video_file, args=(export_amix, export_mbps, export_name))
+                # 使用用户设置的多音轨合并状态
+                t = threading.Thread(target=self.export_video_file, args=(
+                    False, export_mbps, it))
             self.working_thread[it] = t
             t.start()
 
