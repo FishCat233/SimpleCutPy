@@ -14,7 +14,7 @@ from message import ExportMessage, WorkStateEnum
 
 from pymediainfo import MediaInfo
 
-from src.model import VideoSequenceModel, VideoModel
+from model import VideoSequenceModel, VideoModel
 
 VERSION = "0.3.5"
 
