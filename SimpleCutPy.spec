@@ -2,8 +2,8 @@
 
 
 a = Analysis(
-    ['src\\main.py'],
-    pathex=['src', '.venv/Lib/site-packages'],
+    ['src\main.py'],
+    pathex=['src'],
     binaries=[],
     datas=[],
     hiddenimports=['wx', 'src', 'pymediainfo'],
