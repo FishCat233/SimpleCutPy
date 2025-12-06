@@ -36,7 +36,7 @@ SimpleCutPy 使用 wxPython 构建 UI 界面，并通过 UI 界面生成 ffmpeg 
 ## 使用 Pyinstaller 打包 SimpleCutPy
 
 在项目根目录使用如下命令
-`pyinstaller main.spec`
+`pyinstaller SimpleCutPy.spec`
 
 打包生成的文件会在 `./dist/SimpleCutPy.exe`
 

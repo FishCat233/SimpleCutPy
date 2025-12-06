@@ -3,3 +3,4 @@ dist/**
 .venv/**
 .idea/**
 **/__pycache__/**
+.vscode/
