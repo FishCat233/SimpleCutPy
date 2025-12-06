@@ -77,7 +77,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
             self.append_files(filename, path)
 
-            logging.debug("导入文件：{}, {}".format(file_dlg.GetFilename(), file_dlg.GetPath()))
+            logging.debug("导入文件：{}, {}".format(
+                file_dlg.GetFilename(), file_dlg.GetPath()))
 
         file_dlg.Destroy()
 
@@ -128,7 +129,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             return  # 如果没有选中
 
         if value == 0:
-            wx.MessageBox("选中素材已置顶。", "错误", style=wx.YES_DEFAULT | wx.ICON_QUESTION)
+            wx.MessageBox("选中素材已置顶。", "错误",
+                          style=wx.YES_DEFAULT | wx.ICON_QUESTION)
             return  # 如果是第一个物品
 
         self.video_sequence.swap_item(value, value - 1)
@@ -146,10 +148,12 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             return  # 如果没有选中
 
         if value == self.list_ctrl.GetItemCount() - 1:
-            wx.MessageBox("选中素材在最末端。", "错误", style=wx.YES_DEFAULT | wx.ICON_QUESTION)
+            wx.MessageBox("选中素材在最末端。", "错误",
+                          style=wx.YES_DEFAULT | wx.ICON_QUESTION)
             return  # 如果是最后一个
 
-        self.video_sequence.swap_item(self.first_selected_index, self.first_selected_index + 1)
+        self.video_sequence.swap_item(
+            self.first_selected_index, self.first_selected_index + 1)
 
         self.update_video_model_item(value)
         self.update_video_model_item(value + 1)
@@ -175,7 +179,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         # 导出文件名为空则使用时间
         if export_name == '':
-            export_name = str(time.strftime('No Title %Y.%m.%d - %H.%M.output.mp4'))
+            export_name = str(time.strftime(
+                'No Title %Y.%m.%d - %H.%M.output.mp4'))
 
         # 导出路径不为空则更改导出目录
         if not export_path == '':
@@ -242,7 +247,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             if audio_tracks_number > 0 and export_amix:
                 # 多音轨，合并
                 # amix_filter
-                filter_complex_filters.append(merge_filestream_audio_channel(f"{no}", audio_tracks_number, f"{no}a"))
+                filter_complex_filters.append(merge_filestream_audio_channel(
+                    f"{no}", audio_tracks_number, f"{no}a"))
                 concat_inputs.append(f'{no}a')
             else:
                 # 单音轨
@@ -251,7 +257,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         concat_string = concat_filter(concat_inputs, "v", "a")
         filter_complex_filters.append(concat_string)
         # 拼接 filter_complex 命令行参数，拼接滤镜
-        console_command += filter_complex_string + f'"{";".join(filter_complex_filters)}"'
+        console_command += filter_complex_string + \
+            f'"{";".join(filter_complex_filters)}"'
         console_command += ' -map "[v]" -map "[a]"'
         # 拼接全指令
         if os.path.split(export_name)[1] == '':
@@ -262,13 +269,16 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         # 执行命令
         try:
-            subprocess.run(console_command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
+            subprocess.run(console_command, shell=False, check=True,
+                           creationflags=subprocess.CREATE_NO_WINDOW)
 
             # 完成命令，发送事件
-            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.SUCCESS, "导出完成", export_name))
+            wx.CallAfter(self.on_export_done, ExportMessage(
+                WorkStateEnum.SUCCESS, "导出完成", export_name))
         except subprocess.CalledProcessError as e:
             # 导出失败，发送事件
-            wx.CallAfter(self.on_export_done, ExportMessage(WorkStateEnum.FAIL, e))
+            wx.CallAfter(self.on_export_done,
+                         ExportMessage(WorkStateEnum.FAIL, e))
 
     def on_open_project_website_button_click(self, event):
         # TODO: Implement ProjectWebBtnOnClick
