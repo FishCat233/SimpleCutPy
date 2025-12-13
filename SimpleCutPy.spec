@@ -2,9 +2,9 @@
 
 
 a = Analysis(
-    ['src\main.py'],
+    ['src/main.py'],
     pathex=['src'],
-    binaries=[],
+    binaries=[('assets/ffmpeg.exe', 'assets')],
     datas=[],
     hiddenimports=['wx', 'src', 'pymediainfo'],
     hookspath=[],
