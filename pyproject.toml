@@ -4,7 +4,12 @@ version = "0.4.3"
 description = "A simple video cut tool based on wxpython, ffmpeg"
 readme = "README.md"
 requires-python = "==3.12.*"
-dependencies = ["logging>=0.4.9.6", "pymediainfo>=7.0.1", "wxpython>=4.2.2"]
+dependencies = [
+    "logging>=0.4.9.6",
+    "pydantic>=2.12.5",
+    "pymediainfo>=7.0.1",
+    "wxpython>=4.2.2",
+]
 
 [dependency-groups]
 dev = [
