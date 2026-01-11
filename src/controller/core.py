@@ -75,6 +75,11 @@ class CoreController:
             index2 (int): 文件索引2
         """
         self.task.video_sequence.swap(index1, index2)
+        # 更新编号
+        self.task.video_sequence[index1].no, self.task.video_sequence[index2].no = (
+            self.task.video_sequence[index2].no,
+            self.task.video_sequence[index1].no,
+        )
 
     def clear_all_files(self):
         """清除所有文件"""
