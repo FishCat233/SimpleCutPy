@@ -10,6 +10,7 @@ if __name__ == "__main__":
     # 配置日志记录
     logging.basicConfig(
         level=logging.DEBUG,
+        encoding="utf-8",
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         filename="SimpleCut.log",
         filemode="w",
