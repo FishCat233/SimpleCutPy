@@ -8,6 +8,7 @@ dependencies = [
     "logging>=0.4.9.6",
     "pydantic>=2.12.5",
     "pymediainfo>=7.0.1",
+    "requests>=2.32.5",
     "wxpython>=4.2.2",
 ]
 

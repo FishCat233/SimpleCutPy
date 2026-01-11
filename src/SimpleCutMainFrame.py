@@ -10,6 +10,7 @@ import os
 import webbrowser
 
 import wx
+import tools.version
 
 import meta
 import SimpleCutPy
@@ -161,6 +162,36 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
     def on_open_project_website_button_click(self, event):
         webbrowser.open("https://github.com/FishCat233/SimpleCutPy")
+
+    def on_check_update_button_click(self, event):
+        """检查更新按钮点击事件"""
+        try:
+            update_info = tools.version.check_update()
+        except Exception as e:
+            logging.error(f"检查更新失败：{e}")
+            wx.MessageBox("检查更新失败，请稍后再试！", "错误", wx.OK | wx.ICON_ERROR)
+            return
+
+        if update_info.has_new_version:
+            # 有新版本
+            dlg = wx.MessageDialog(
+                self,
+                f"发现新版本 {update_info.latest_version}！\n当前版本：{update_info.current_version}\n\n是否打开下载页面？",
+                "检查更新",
+                wx.YES_NO | wx.ICON_INFORMATION,
+            )
+            result = dlg.ShowModal()
+            dlg.Destroy()
+
+            if result == wx.ID_YES:
+                webbrowser.open(update_info.release_url)
+        else:
+            # 当前已是最新版本
+            wx.MessageBox(
+                f"当前已是最新版本 {update_info.current_version}！",
+                "检查更新",
+                wx.OK | wx.ICON_INFORMATION,
+            )
 
     def on_clear_all_button_click(self, event):
         self.core_controller.clear_all_files()
