@@ -6,7 +6,7 @@ import wx
 
 from export.model import ExportConfig, ExportTask, VideoFile
 import export
-from src.message import ExportMessage, WorkStateEnum
+from message import ExportMessage, WorkStateEnum
 
 if TYPE_CHECKING:
     from SimpleCutMainFrame import SimpleCutPyMainFrame
