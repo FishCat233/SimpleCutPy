@@ -210,8 +210,16 @@ class MainFrame ( wx.Frame ):
 
 		bSizer8.Add( self.VersionText, 0, wx.ALL, 5 )
 
+		bSizer161 = wx.BoxSizer( wx.HORIZONTAL )
+
 		self.ProjectWebBtn = wx.Button( self.m_panel4, wx.ID_ANY, u"访问项目", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer8.Add( self.ProjectWebBtn, 0, wx.ALL, 5 )
+		bSizer161.Add( self.ProjectWebBtn, 0, wx.ALL, 5 )
+
+		self.ProjectWebBtn1 = wx.Button( self.m_panel4, wx.ID_ANY, u"检查更新", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer161.Add( self.ProjectWebBtn1, 0, wx.ALL, 5 )
+
+
+		bSizer8.Add( bSizer161, 1, wx.EXPAND, 5 )
 
 
 		self.m_panel4.SetSizer( bSizer8 )
@@ -239,6 +247,7 @@ class MainFrame ( wx.Frame ):
 		self.SizeControlMode.Bind( wx.EVT_CHOICE, self.on_size_control_mode_change )
 		self.ExportBtn.Bind( wx.EVT_BUTTON, self.on_export_button_click )
 		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.on_open_project_website_button_click )
+		self.ProjectWebBtn1.Bind( wx.EVT_BUTTON, self.on_check_update_button_click )
 
 	def __del__( self ):
 		pass
@@ -276,6 +285,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def on_open_project_website_button_click( self, event ):
+		event.Skip()
+
+	def on_check_update_button_click( self, event ):
 		event.Skip()
 
 
