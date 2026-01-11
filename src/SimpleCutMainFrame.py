@@ -59,6 +59,8 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         self.core_controller = CoreController(self)
 
+        self.on_size_control_mode_change(None)
+
     def _bind_event(self):
         pass
 
@@ -228,11 +230,13 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             case _:
                 size_control_mode = "none"
 
+        logging.debug(f"SizeControlMode: {size_control_mode}")
+
         # 如果不是 mbps 则隐藏，否则显示
         if size_control_mode == "mbps":
-            self.MbpsCtrl.Show()
+            self.MbpsCtrl.Enable()
         else:
-            self.MbpsCtrl.Hide()
+            self.MbpsCtrl.Disable()
 
         return
 
