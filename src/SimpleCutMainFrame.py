@@ -13,7 +13,6 @@ import wx
 import meta
 import SimpleCutPy
 from message import ExportMessage, WorkStateEnum
-from model import VideoSequenceModel
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -44,8 +43,6 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.SetDropTarget(FileDropTarget(self))
 
         self.first_selected_index = 0
-        # self.item_list: list[dict] = []  # 列表是控件上的映射，列表的物品顺序就是控件上物品的顺序
-        self.video_sequence: VideoSequenceModel = VideoSequenceModel()
 
         # list_ctrl 控件添加列
         self.list_ctrl.InsertColumn(0, "序号", width=40)
@@ -167,7 +164,9 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
     def on_clear_all_button_click(self, event):
         self.core_controller.clear_all_files()
-        logging.debug(f"clear all video: {self.video_sequence.video_list}")
+        logging.debug(
+            f"clear all video: {self.core_controller.task.video_sequence.get_video_list()}"
+        )
         self.update_video_sequence_view()
 
     def on_start_time_ctrl_text(self, event):
