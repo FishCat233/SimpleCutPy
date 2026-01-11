@@ -181,7 +181,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             logging.error(f"Set Start Time Error: {e}")
             return
 
-        self.update_video_file_view(videofile)
+        self.update_video_file_view(index, videofile)
 
     def on_end_time_ctrl_text(self, event):
         """修改结束时间输入框的时候修改itemlist的end_time"""
@@ -197,7 +197,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             logging.error(f"Set End Time Error: {e}")
             return
 
-        self.update_video_file_view(videofile)
+        self.update_video_file_view(index, videofile)
 
     def on_list_item_selected(self, event):
         index = self.list_ctrl.GetFirstSelected()
@@ -245,18 +245,17 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         return
 
-    def update_video_file_view(self, file: VideoFile):
+    def update_video_file_view(self, index: int, file: VideoFile):
         """将 VideoFile 载入到 列表item上
 
         Args:
+            index (int): 列表项索引
             file (VideoFile): 要载入的视频文件
         """
-        index = file.no - 1
-
         logging.debug(f"update_video_file_view: {file}, index: {index}")
-        # 检查列表控件中是否已经有这个项，如果没有则插入
-        if index >= self.list_ctrl.GetItemCount():
-            self.list_ctrl.InsertItem(index, "")
+        # 确保列表控件中有足够的项
+        while index >= self.list_ctrl.GetItemCount():
+            self.list_ctrl.InsertItem(self.list_ctrl.GetItemCount(), "")
 
         self.list_ctrl.SetItem(index, 0, str(index + 1))
         self.list_ctrl.SetItem(index, 1, file.file_name)
@@ -273,15 +272,20 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         sequence = self.core_controller.task.video_sequence.get_video_list()
         logging.debug(f"update_video_sequence_view: {index}, sequence: {sequence}")
         if index == -1:
-            for item in sequence:
-                self.update_video_file_view(item)
-
-            # 多出来的项，删除
-            for i in range(len(sequence), self.list_ctrl.GetItemCount()):
-                self.list_ctrl.DeleteItem(i)
+            # 清空列表，然后重新添加所有条目，避免空白条目
+            self.list_ctrl.DeleteAllItems()
+            for i, item in enumerate(sequence):
+                # 直接添加到列表末尾
+                self.list_ctrl.InsertItem(i, str(i + 1))
+                self.list_ctrl.SetItem(i, 1, item.file_name)
+                self.list_ctrl.SetItem(i, 2, item.start_time)
+                self.list_ctrl.SetItem(i, 3, item.end_time)
+                self.list_ctrl.SetItem(i, 4, item.file_path)
             return
 
-        self.update_video_file_view(sequence[index])
+        # 只更新单个条目
+        if index < len(sequence):
+            self.update_video_file_view(index, sequence[index])
 
     def update_export_config_view(self) -> None:
         """更新导出配置视图"""
