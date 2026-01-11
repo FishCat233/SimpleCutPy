@@ -76,21 +76,6 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         file_dlg.Destroy()
 
-    def list_ctrl_on_drop_files(self, event):
-        files = event.GetFiles()
-
-        # 防止拖空文件
-        if len(files) <= 0:
-            return
-
-        logging.debug(f"拖拽文件：{files}")
-
-        for full_file_path in files:
-            filepath, filename = os.path.split(full_file_path)
-            self.core_controller.add_file(filename, filepath)
-
-        self.update_video_sequence_view()
-
     def on_remove_file_button_click(self, event):
         # 删除列表中的项
         target_idx = self.core_controller.first_select_index

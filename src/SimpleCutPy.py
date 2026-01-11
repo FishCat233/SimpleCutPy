@@ -88,7 +88,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel2.SetSizer( bSizer4 )
 		self.m_panel2.Layout()
 		bSizer4.Fit( self.m_panel2 )
-		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", False )
+		self.m_notebook1.AddPage( self.m_panel2, u"素材设置", True )
 		self.m_panel3 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
@@ -181,7 +181,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel3.SetSizer( bSizer5 )
 		self.m_panel3.Layout()
 		bSizer5.Fit( self.m_panel3 )
-		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", True )
+		self.m_notebook1.AddPage( self.m_panel3, u"导出设置", False )
 		self.m_panel41 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer13 = wx.BoxSizer( wx.VERTICAL )
 
@@ -228,7 +228,6 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.list_ctrl.Bind( wx.EVT_DROP_FILES, self.list_ctrl_on_drop_files )
 		self.list_ctrl.Bind( wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected )
 		self.StartTimeCtrl.Bind( wx.EVT_TEXT, self.on_start_time_ctrl_text )
 		self.EndTimeCtrl.Bind( wx.EVT_TEXT, self.on_end_time_ctrl_text )
@@ -246,9 +245,6 @@ class MainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def list_ctrl_on_drop_files( self, event ):
-		event.Skip()
-
 	def on_list_item_selected( self, event ):
 		event.Skip()
 
