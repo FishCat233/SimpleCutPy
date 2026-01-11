@@ -2,8 +2,9 @@
 
 import os
 import re
+import time
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, field_validator
 
 
 class VideoFile(BaseModel):
@@ -12,8 +13,8 @@ class VideoFile(BaseModel):
     no: int
     file_name: str
     file_path: str
-    start_time: str
-    end_time: str
+    start_time: str = "开始"
+    end_time: str = "结束"
 
     def get_full_file_path(self) -> str:
         """获取视频文件完整路径
@@ -66,7 +67,7 @@ class VideoFile(BaseModel):
         # 空格替换冒号
         v = v.replace(" ", ":")
 
-        if v == "开始" or v == "结束" or not re.match(r"^[0123456789:]*$", v):
+        if v != "开始" or v != "结束" or not re.match(r"^[0123456789:]*$", v):
             raise ValueError("时间格式错误")
 
         return v
@@ -100,22 +101,33 @@ class VideoSequence(BaseModel):
     def get_video_list(self) -> list[VideoFile]:
         return self.video_files
 
-    def pop_video(self, no: int):
+    def modify(self, no: int, video: VideoFile):
+        self.video_files[no] = video
+
+    def remove(self, no: int):
+        # 移除
         self.video_files.pop(no)
 
-    def insert_video(self, video: VideoFile, no: int):
+        # 排序
+        self.video_files.sort(key=lambda x: x.no)
+
+        # 重新编号
+        for i, v in enumerate(self.video_files):
+            v.no = i + 1
+
+    def insert(self, video: VideoFile, no: int):
         self.video_files.insert(no, video)
 
-    def append_video(self, video: VideoFile):
+    def append(self, video: VideoFile):
         self.video_files.append(video)
 
-    def swap_item(self, no1: int, no2: int):
+    def swap(self, no1: int, no2: int):
         self.video_files[no1], self.video_files[no2] = (
             self.video_files[no2],
             self.video_files[no1],
         )
 
-    def clear_all(self):
+    def clear(self):
         self.video_files = []
 
 
@@ -162,7 +174,7 @@ class ExportTask(BaseModel):
         )
         export_file_name = self.export_file_name
         if export_file_name == "":
-            export_file_name = self.video_sequence[0].file_name
+            export_file_name = time.strftime("No Title %Y.%m.%d - %H.%M.output.mp4")
 
         # 自动补全后缀扩展
         if "." not in export_file_name:
