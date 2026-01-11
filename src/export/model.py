@@ -52,7 +52,7 @@ class VideoFile(BaseModel):
         验证时间字符串是否合法，并进行格式化
 
         Args:
-            v (str): 时间字符串，要求只能由数字和冒号组成
+            v (str): 时间字符串，要求只能由数字和冒号组成，或为特殊值"开始"/"结束"
 
         Returns:
             str: 验证通过的时间字符串
@@ -67,7 +67,8 @@ class VideoFile(BaseModel):
         # 空格替换冒号
         v = v.replace(" ", ":")
 
-        if v != "开始" or v != "结束" or not re.match(r"^[0123456789:]*$", v):
+        # 检查是否为特殊值或有效时间格式
+        if v != "开始" and v != "结束" and not re.match(r"^[0123456789:]*$", v):
             raise ValueError("时间格式错误")
 
         return v
