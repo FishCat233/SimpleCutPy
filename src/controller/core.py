@@ -116,10 +116,10 @@ class CoreController:
         # 预处理，将多导出化为单导出
         tasks = []
         if self.task.export_config.multi_track_mode == "export_both":
-            first_only_task = self.task.model_copy()
+            first_only_task = self.task.model_copy(deep=True)
             first_only_task.export_config.multi_track_mode = "first"
 
-            amix_task = self.task.model_copy()
+            amix_task = self.task.model_copy(deep=True)
             amix_task.export_config.multi_track_mode = "amix"
             # 添加后缀
             origin_name, ext = os.path.splitext(amix_task.export_file_name)
