@@ -43,7 +43,8 @@ def export(task: ExportTask) -> None:
         return
 
     command += filter_complex
-    command += build_command_tail(task.export_file_path, task.export_config)
+
+    command += build_command_tail(task.get_export_full_path(), task.export_config)
 
     logging.info("export one with command: %s", command)
 
@@ -93,7 +94,7 @@ def build_video_input(video_file: VideoFile) -> str:
         "" if video_file.end_time == "结束" else f" -to {video_file.end_time}"
     )
 
-    ret = f"{start_time_string}{end_time_string} -i {video_file.file_path}"
+    ret = f"{start_time_string}{end_time_string} -i {video_file.full_file_path}"
 
     return ret
 
@@ -120,7 +121,7 @@ def build_filter_complex(
     for i, v in enumerate(video_files):
         concat_inputs.append(f"{i}:v")
 
-        multi_track_mode = get_audio_track_count(v.file_path)
+        multi_track_mode = get_audio_track_count(v.full_file_path)
         if multi_track_mode > 1 and audio_merge_type == "amix":
             # 多音轨且需要合并
             output_alias = f"{i}a"  # 为每个音频流创建唯一别名

@@ -1,17 +1,35 @@
 """导出模型"""
 
+import os
 import re
 from typing import Literal
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class VideoFile(BaseModel):
     """视频文件"""
 
     no: int
+    file_name: str
     file_path: str
     start_time: str
     end_time: str
+
+    def get_full_file_path(self) -> str:
+        """获取视频文件完整路径
+
+        Returns:
+            str: 视频文件完整路径
+        """
+        return os.path.join(self.file_path, self.file_name)
+
+    def set_full_file_path(self, full_file_path: str) -> None:
+        """设置视频文件完整路径
+
+        Args:
+            full_file_path (str): 视频文件完整路径
+        """
+        self.file_path, self.file_name = os.path.split(full_file_path)
 
     @field_validator("no")
     def validate_no(cls, v: int) -> int:
@@ -125,7 +143,29 @@ class ExportConfig(BaseModel):
 class ExportTask(BaseModel):
     """导出任务"""
 
-    video_sequence: VideoSequence
-    export_file_name: str
-    export_file_path: str
-    export_config: ExportConfig
+    video_sequence: VideoSequence = VideoSequence()
+    export_file_name: str = ""
+    export_file_path: str = ""
+    export_config: ExportConfig = ExportConfig()
+
+    def get_export_full_path(self) -> str:
+        """获取导出文件完整路径
+
+        Returns:
+            str: 导出文件完整路径
+        """
+        # 如果 path 为空则使用第一个视频文件的路径
+        export_file_path = (
+            self.export_file_path
+            if self.export_file_path != ""
+            else self.video_sequence[0].file_path
+        )
+        export_file_name = self.export_file_name
+        if export_file_name == "":
+            export_file_name = self.video_sequence[0].file_name
+
+        # 自动补全后缀扩展
+        if "." not in export_file_name:
+            export_file_name += ".mp4"
+
+        return os.path.join(export_file_path, export_file_name)
