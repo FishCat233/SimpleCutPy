@@ -122,8 +122,8 @@ class CoreController:
             amix_task = self.task.model_copy(deep=True)
             amix_task.export_config.multi_track_mode = "amix"
             # 添加后缀
-            origin_name, ext = os.path.splitext(amix_task.export_file_name)
-            amix_task.export_file_name = origin_name + "_amix" + ext
+            header, ext = os.path.splitext(amix_task.get_export_full_path())
+            amix_task.export_file_name = header + "_amix" + ext
 
             tasks.append(first_only_task)
             tasks.append(amix_task)
