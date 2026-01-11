@@ -1,7 +1,9 @@
+import logging
 import os
 import threading
 from typing import TYPE_CHECKING
 
+from pydantic import ValidationError
 import wx
 
 from export.model import ExportConfig, ExportTask, VideoFile
@@ -104,6 +106,13 @@ class CoreController:
     def export_sequence(self):
         """导出视频序列"""
 
+        # 验证
+        try:
+            self.task = ExportTask.model_validate(self.task)
+        except ValidationError as e:
+            logging.error(f"Export Task Validate Error: {e}")
+            return
+
         # 预处理，将多导出化为单导出
         tasks = []
         if self.task.export_config.multi_track_mode == "export_both":
@@ -150,3 +159,17 @@ class CoreController:
             self.working_thread[export_path] = thread
             # 启动线程
             thread.start()
+
+    @staticmethod
+    def format_time(time_str: str) -> str:
+        """格式化时间字符串
+
+        Args:
+            time_str (str): 时间字符串，要求只能由数字和冒号组成，或为特殊值"开始"/"结束"
+
+        Returns:
+            str: 格式化后的时间字符串
+        """
+
+        time_str = time_str.strip().replace("：", ":").replace(" ", ":")
+        return time_str
