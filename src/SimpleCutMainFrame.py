@@ -101,13 +101,15 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         if target_idx >= self.core_controller.sequence_length():
             return  # 如果超出范围
 
-        self.video_sequence.pop_video(target_idx)
         self.core_controller.remove_file(target_idx)
 
         self.update_video_sequence_view()
 
         # 选中 index
-        self.list_ctrl.Select(target_idx)
+        if target_idx < self.core_controller.sequence_length():
+            self.list_ctrl.Select(target_idx)
+        elif self.core_controller.sequence_length() > 0:
+            self.list_ctrl.Select(self.core_controller.sequence_length() - 1)
 
     def on_move_up_file_button_click(self, event):
         idx = self.core_controller.first_select_index
