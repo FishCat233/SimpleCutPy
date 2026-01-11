@@ -36,6 +36,9 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
     def __init__(self, parent=None):
         SimpleCutPy.MainFrame.__init__(self, parent)
 
+        # 设置标题
+        self.SetTitle(f"Simple Cut Py {meta.VERSION}")
+
         # 设置拖拽文件
         self.list_ctrl.SetDropTarget(FileDropTarget(self))
 
