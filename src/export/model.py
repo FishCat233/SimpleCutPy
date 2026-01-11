@@ -133,7 +133,7 @@ class VideoSequence(BaseModel):
 
 
 type MultiTrackMode = Literal["first", "amix", "export_both"]
-type SizeControlMode = X264Config | MbpsConfig
+type SizeControlMode = X264Config | MbpsConfig | None
 
 
 class X264Config(BaseModel):
@@ -143,13 +143,13 @@ class X264Config(BaseModel):
 class MbpsConfig(BaseModel):
     """Mbps 配置"""
 
-    mbps: int = 6
+    mbps: float = 6
 
 
 class ExportConfig(BaseModel):
     """导出配置"""
 
-    amix_mode: MultiTrackMode = "first"
+    multi_track_mode: MultiTrackMode = "first"
     size_control: SizeControlMode = MbpsConfig()
 
 
