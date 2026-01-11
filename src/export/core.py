@@ -98,7 +98,7 @@ def build_video_input(video_file: VideoFile) -> str:
         "" if video_file.end_time == "结束" else f" -to {video_file.end_time}"
     )
 
-    ret = f"{start_time_string}{end_time_string} -i {video_file.get_full_file_path()}"
+    ret = f'{start_time_string}{end_time_string} -i "{video_file.get_full_file_path()}"'
 
     return ret
 
