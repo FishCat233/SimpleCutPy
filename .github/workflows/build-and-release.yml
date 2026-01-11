@@ -79,5 +79,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           draft: false
-          prerelease: false
+          prerelease: true
           files: dist/SimpleCutPy-${{ github.ref_name }}.zip
