@@ -97,6 +97,10 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             self.list_ctrl.Select(self.core_controller.sequence_length() - 1)
 
     def on_move_up_file_button_click(self, event):
+        logging.debug(
+            f"on_move_up_file_button_click: {self.core_controller.first_select_index}"
+        )
+
         idx = self.core_controller.first_select_index
 
         if idx == -1:
@@ -116,6 +120,10 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         self.list_ctrl.Select(idx - 1)
 
     def on_move_down_file_button_click(self, event):
+        logging.debug(
+            f"on_move_down_file_button_click: {self.core_controller.first_select_index}"
+        )
+
         idx = self.core_controller.first_select_index
 
         if idx == -1:
@@ -265,11 +273,12 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         sequence = self.core_controller.task.video_sequence.get_video_list()
         logging.debug(f"update_video_sequence_view: {index}, sequence: {sequence}")
         if index == -1:
-            # 清空所有项
-            self.list_ctrl.DeleteAllItems()
-
             for item in sequence:
                 self.update_video_file_view(item)
+
+            # 多出来的项，删除
+            for i in range(len(sequence), self.list_ctrl.GetItemCount()):
+                self.list_ctrl.DeleteItem(i)
             return
 
         self.update_video_file_view(sequence[index])
