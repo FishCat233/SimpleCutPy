@@ -236,7 +236,7 @@ class MainFrame ( wx.Frame ):
 		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.on_move_up_file_button_click )
 		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.on_move_down_file_button_click )
 		self.ClearAllBtn.Bind( wx.EVT_BUTTON, self.on_clear_all_button_click )
-		self.MbpsCtrl.Bind( wx.EVT_TEXT, self.on_size_control_mode_change )
+		self.SizeControlMode.Bind( wx.EVT_CHOICE, self.on_size_control_mode_change )
 		self.ExportBtn.Bind( wx.EVT_BUTTON, self.on_export_button_click )
 		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.on_open_project_website_button_click )
 
