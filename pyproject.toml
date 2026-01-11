@@ -1,6 +1,6 @@
 [project]
 name = "simplecutpy"
-version = "0.4.3"
+version = "0.5.0"
 description = "A simple video cut tool based on wxpython, ffmpeg"
 readme = "README.md"
 requires-python = "==3.12.*"
@@ -12,6 +12,4 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "pyinstaller>=6.17.0",
-]
+dev = ["pyinstaller>=6.17.0"]
