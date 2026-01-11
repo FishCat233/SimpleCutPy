@@ -1,6 +1,12 @@
+import os
+import threading
 from typing import TYPE_CHECKING
 
-from export.model import ExportTask, VideoFile
+import wx
+
+from export.model import ExportConfig, ExportTask, VideoFile
+import export
+from src.message import ExportMessage, WorkStateEnum
 
 if TYPE_CHECKING:
     from SimpleCutMainFrame import SimpleCutPyMainFrame
@@ -13,6 +19,8 @@ class CoreController:
         self.view = view
         self.first_select_index: int = 0
         self.task = ExportTask()
+
+        self.working_thread = {}
 
     def get_file(self, index: int) -> VideoFile:
         """获取文件
@@ -80,9 +88,60 @@ class CoreController:
         """
         return len(self.task.video_sequence.video_files)
 
+    def setup_export_config(self, export_config: ExportConfig):
+        """设置导出配置
+
+        Args:
+            export_config (ExportConfig): 导出配置对象
+        """
+        self.task.export_config = export_config
+
     def export_sequence(self):
         """导出视频序列"""
 
-        # 加载 view 上的导出配置
-        export_config = self.view.export_config
-        self.task.export_config = export_config
+        # 预处理，将多导出化为单导出
+        tasks = []
+        if self.task.export_config.multi_track_mode == "export_both":
+            first_only_task = self.task.model_copy()
+            first_only_task.export_config.multi_track_mode = "first"
+
+            amix_task = self.task.model_copy()
+            amix_task.export_config.multi_track_mode = "amix"
+            # 添加后缀
+            origin_name, ext = os.path.splitext(amix_task.export_file_name)
+            amix_task.export_file_name = origin_name + "_amix" + ext
+
+            tasks.append(first_only_task)
+            tasks.append(amix_task)
+        else:
+            tasks.append(self.task)
+
+        def export_thread(task):
+            """导出线程函数"""
+            success = export.core.export(task)
+            export_path = task.get_export_full_path()
+
+            # 从工作线程字典中移除
+            if export_path in self.working_thread:
+                self.working_thread.pop(export_path)
+
+            # 使用wx.CallAfter在主线程中更新UI
+            if success:
+                wx.CallAfter(
+                    self.view.on_export_done,
+                    ExportMessage(WorkStateEnum.SUCCESS, "导出完成", export_path),
+                )
+            else:
+                wx.CallAfter(
+                    self.view.on_export_done,
+                    ExportMessage(WorkStateEnum.FAIL, "导出失败", export_path),
+                )
+
+        for task in tasks:
+            export_path = task.get_export_full_path()
+            # 创建线程
+            thread = threading.Thread(target=export_thread, args=(task,))
+            # 保存线程引用
+            self.working_thread[export_path] = thread
+            # 启动线程
+            thread.start()

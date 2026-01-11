@@ -109,16 +109,33 @@ class MainFrame ( wx.Frame ):
 
 		bSizer12 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText81 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出码率（Mbps）：", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText81 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"文件大小控制：", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText81.Wrap( -1 )
 
 		bSizer12.Add( self.m_staticText81, 0, wx.ALL, 5 )
 
-		self.ExportBitCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 295,-1 ), 0 )
-		bSizer12.Add( self.ExportBitCtrl, 0, wx.ALL, 5 )
+		SizeControlModeChoices = [ u"x264", u"mbps", u"不控制" ]
+		self.SizeControlMode = wx.Choice( self.m_panel3, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, SizeControlModeChoices, 0 )
+		self.SizeControlMode.SetSelection( 0 )
+		self.SizeControlMode.SetMinSize( wx.Size( 200,-1 ) )
+
+		bSizer12.Add( self.SizeControlMode, 0, wx.ALL, 5 )
 
 
 		bSizer5.Add( bSizer12, 1, wx.EXPAND, 5 )
+
+		bSizer121 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText811 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"导出码率（Mbps）：", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText811.Wrap( -1 )
+
+		bSizer121.Add( self.m_staticText811, 0, wx.ALL, 5 )
+
+		self.MbpsCtrl = wx.TextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 295,-1 ), 0 )
+		bSizer121.Add( self.MbpsCtrl, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer121, 1, wx.EXPAND, 5 )
 
 		bSizer101 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -135,22 +152,27 @@ class MainFrame ( wx.Frame ):
 
 		bSizer5.Add( bSizer101, 1, wx.EXPAND, 5 )
 
-		self.m_staticText7 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"帮助：\n1. 在不写导出文件名的情况下，会默认导出文件为”No Title - 日期时间.mp4\"\n2. 在不填写具体路径的情况下，会默认导出到第一个素材所在的目录。\n3. 默认的导出码率是 6 Mbps", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText7.Wrap( -1 )
+		bSizer122 = wx.BoxSizer( wx.HORIZONTAL )
 
-		bSizer5.Add( self.m_staticText7, 0, wx.ALL, 5 )
+		self.m_staticText812 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"多音轨处理：", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText812.Wrap( -1 )
+
+		bSizer122.Add( self.m_staticText812, 0, wx.ALL, 5 )
+
+		MultiTrackModeChoices = [ u"只选择第一个音轨", u"全部合并为单音轨", u"上面两个都要（两次输出）" ]
+		self.MultiTrackMode = wx.Choice( self.m_panel3, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, MultiTrackModeChoices, 0 )
+		self.MultiTrackMode.SetSelection( 0 )
+		self.MultiTrackMode.SetMinSize( wx.Size( 200,-1 ) )
+
+		bSizer122.Add( self.MultiTrackMode, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer122, 1, wx.EXPAND, 5 )
 
 		bSizer16 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.ExportBtn = wx.Button( self.m_panel3, wx.ID_ANY, u"导出", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer16.Add( self.ExportBtn, 0, wx.ALL, 5 )
-
-		self.AmixCheckBox = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"多音轨合并", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.AmixCheckBox.SetValue(True)
-		bSizer16.Add( self.AmixCheckBox, 0, wx.ALL, 5 )
-
-		self.DoubleOutputBox = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"双份输出", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer16.Add( self.DoubleOutputBox, 0, wx.ALL, 5 )
 
 
 		bSizer5.Add( bSizer16, 1, wx.EXPAND, 5 )
@@ -215,6 +237,7 @@ class MainFrame ( wx.Frame ):
 		self.MovUpBtn.Bind( wx.EVT_BUTTON, self.on_move_up_file_button_click )
 		self.MovDownBtn.Bind( wx.EVT_BUTTON, self.on_move_down_file_button_click )
 		self.ClearAllBtn.Bind( wx.EVT_BUTTON, self.on_clear_all_button_click )
+		self.MbpsCtrl.Bind( wx.EVT_TEXT, self.on_size_control_mode_change )
 		self.ExportBtn.Bind( wx.EVT_BUTTON, self.on_export_button_click )
 		self.ProjectWebBtn.Bind( wx.EVT_BUTTON, self.on_open_project_website_button_click )
 
@@ -248,6 +271,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def on_clear_all_button_click( self, event ):
+		event.Skip()
+
+	def on_size_control_mode_change( self, event ):
 		event.Skip()
 
 	def on_export_button_click( self, event ):
