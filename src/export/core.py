@@ -15,14 +15,14 @@ from .model import (
 from .filter_builder import FilterBuilder
 
 
-def export(task: ExportTask) -> None:
+def export(task: ExportTask) -> bool:
     """导出视频切片
 
     Args:
         task (ExportTask): 导出任务
 
     Returns:
-        None: 无返回值
+        bool: 导出是否成功
     """
 
     ffmpeg_path = PathHelper.get_ffmpeg_path()
@@ -36,24 +36,28 @@ def export(task: ExportTask) -> None:
     try:
         filter_complex = build_filter_complex(
             task.video_sequence.get_video_list(),
-            task.export_config.amix_mode,
+            task.export_config.multi_track_mode,
         )
     except Exception as e:
         logging.error("build filter complex error: {:?}", e)
-        return
+        return False
 
     command += filter_complex
 
     command += build_command_tail(task.get_export_full_path(), task.export_config)
 
-    logging.info("export one with command: %s", command)
+    logging.info("导出命令: %s", command)
 
     # 执行命令
     try:
-        subprocess.run(command, check=True)
+        subprocess.run(
+            command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW
+        )
+        logging.info("export one success")
+        return True
     except subprocess.CalledProcessError as e:
         logging.error("export one failed with error: {:?}", e)
-        return
+        return False
 
 
 def build_command_header(ffmpeg_path: str) -> str:
