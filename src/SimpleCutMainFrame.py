@@ -21,10 +21,13 @@ class FileDropTarget(wx.FileDropTarget):
         self.target = target
 
     def OnDropFiles(self, x, y, filenames):
+        logging.debug(f"FileDropTarget 拖拽文件：{filenames}")
         for file in filenames:
-            filename, filepath = os.path.split(file)
+            filepath, filename = os.path.split(file)
+            logging.debug(f"解析文件：{file} -> 路径: {filepath}, 文件名: {filename}")
             self.target.core_controller.add_file(filename, filepath)
 
+        self.target.update_video_sequence_view()
         return True
 
 
@@ -83,7 +86,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         logging.debug(f"拖拽文件：{files}")
 
         for full_file_path in files:
-            filename, filepath = os.path.split(full_file_path)
+            filepath, filename = os.path.split(full_file_path)
             self.core_controller.add_file(filename, filepath)
 
         self.update_video_sequence_view()
@@ -252,10 +255,14 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
 
         Args:
             file (VideoFile): 要载入的视频文件
-            index (int): 要载入的列表项索引
         """
         index = file.no - 1
-        self.list_ctrl.SetItem(index, 0, str(index))
+
+        # 检查列表控件中是否已经有这个项，如果没有则插入
+        if index >= self.list_ctrl.GetItemCount():
+            self.list_ctrl.InsertItem(index, "")
+
+        self.list_ctrl.SetItem(index, 0, str(index + 1))
         self.list_ctrl.SetItem(index, 1, file.file_name)
         self.list_ctrl.SetItem(index, 2, file.start_time)
         self.list_ctrl.SetItem(index, 3, file.end_time)
