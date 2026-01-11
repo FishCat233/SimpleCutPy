@@ -260,6 +260,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         """
         index = file.no - 1
 
+        logging.debug(f"update_video_file_view: {file}, index: {index}")
         # 检查列表控件中是否已经有这个项，如果没有则插入
         if index >= self.list_ctrl.GetItemCount():
             self.list_ctrl.InsertItem(index, "")
@@ -277,7 +278,11 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
             index (int, optional): 要更新的视频序列索引. 默认-1表示更新所有.
         """
         sequence = self.core_controller.task.video_sequence.get_video_list()
+        logging.debug(f"update_video_sequence_view: {index}, sequence: {sequence}")
         if index == -1:
+            # 清空所有项
+            self.list_ctrl.DeleteAllItems()
+
             for item in sequence:
                 self.update_video_file_view(item)
             return
