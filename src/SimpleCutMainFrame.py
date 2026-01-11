@@ -7,6 +7,7 @@ import export
 from controller.core import CoreController
 import logging
 import os
+import webbrowser
 
 import wx
 
@@ -159,8 +160,7 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         return
 
     def on_open_project_website_button_click(self, event):
-        # TODO: Implement ProjectWebBtnOnClick
-        pass
+        webbrowser.open("https://github.com/FishCat233/SimpleCutPy")
 
     def on_clear_all_button_click(self, event):
         self.core_controller.clear_all_files()
