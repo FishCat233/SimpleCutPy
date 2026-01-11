@@ -56,9 +56,6 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         # 标记版本
         self.VersionText.SetLabelText(f"Simple Cut Py 版本号\n{meta.VERSION}")
 
-        # 线程字典
-        self.working_thread: dict[str, threading.Thread] = {}
-
         self.core_controller = CoreController(self)
 
     def _bind_event(self):
@@ -219,13 +216,11 @@ class SimpleCutPyMainFrame(SimpleCutPy.MainFrame):
         logging.debug(f"Export Done: {msg}")
         if msg.state == WorkStateEnum.SUCCESS:
             wx.MessageBox("导出成功", "提示", wx.OK | wx.ICON_INFORMATION)
-            if msg.export_name != "":
-                self.working_thread.pop(msg.export_name)
         elif msg.state == WorkStateEnum.FAIL:
             logging.error(f"Export Error: {msg.message}")
             wx.MessageBox("导出失败", "提示", wx.OK | wx.ICON_INFORMATION)
 
-        if len(self.working_thread) == 0:
+        if len(self.core_controller.working_thread) == 0:
             self.ExportBtn.Enable()
 
         return
