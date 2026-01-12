@@ -48,14 +48,36 @@ def export(task: ExportTask) -> bool:
 
     logging.info("导出命令: %s", command)
 
-    # 执行命令
+    # 执行命令并捕获输出
     try:
-        subprocess.run(
-            command, shell=False, check=True, creationflags=subprocess.CREATE_NO_WINDOW
+        result = subprocess.run(
+            command,
+            shell=False,
+            check=True,
+            capture_output=True,  # 捕获stdout和stderr
+            text=True,  # 以文本模式捕获输出
+            encoding="utf-8",  # 使用UTF-8编码
+            errors="replace",  # 替换无法解码的字符
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
+
+        # 将子进程输出写入日志
+        if result.stdout:
+            logging.info(f"FFmpeg stdout: {result.stdout}")
+        if result.stderr:
+            logging.info(
+                f"FFmpeg stderr: {result.stderr}"
+            )  # 使用info级别记录，因为ffmpeg通常在stderr输出进度
+
         logging.info("export one success")
         return True
     except subprocess.CalledProcessError as e:
+        # 捕获错误输出
+        if e.stdout:
+            logging.error(f"FFmpeg stdout (error): {e.stdout}")
+
+            logging.error(f"FFmpeg stderr (error): {e.stderr}")
+
         logging.error("export one failed with error: {:?}", e)
         return False
 
@@ -69,7 +91,7 @@ def build_command_header(ffmpeg_path: str) -> str:
     Returns:
         str: 构建后的ffmpeg命令头字符串
     """
-    return ffmpeg_path + " -y"
+    return ffmpeg_path + " -y -nostats"
 
 
 def build_command_header_without_executeable() -> str:
@@ -78,7 +100,7 @@ def build_command_header_without_executeable() -> str:
     Returns:
         str: 构建后的不带执行文件路径的ffmpeg命令头字符串
     """
-    return " -y"
+    return " -y -nostats"
 
 
 def build_video_input(video_file: VideoFile) -> str:
