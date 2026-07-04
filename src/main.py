@@ -1,13 +1,12 @@
+"""SimpleCutPy 入口 — dearpygui 版本。"""
+
+import logging
 import sys
 
-import wx
-
-from SimpleCutMainFrame import SimpleCutPyMainFrame
+from controller.core import CoreController
+from ui.app import run
 
 if __name__ == "__main__":
-    import logging
-
-    # 配置日志记录
     logging.basicConfig(
         level=logging.DEBUG,
         encoding="utf-8",
@@ -16,9 +15,7 @@ if __name__ == "__main__":
         filemode="w",
     )
 
-    App = wx.App()
-    mainFrame = SimpleCutPyMainFrame()
-    mainFrame.Show(True)
-    App.MainLoop()
+    controller = CoreController()
+    run(controller)
 
     sys.exit(0)

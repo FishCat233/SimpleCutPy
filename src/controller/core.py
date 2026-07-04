@@ -1,56 +1,51 @@
+"""核心控制器 — 纯数据管理 + 线程管理，不依赖任何 UI 框架。"""
+
 import logging
 import os
 import threading
-from typing import TYPE_CHECKING
+from collections import deque
 
 from pydantic import ValidationError
-import wx
 
-from export.model import ExportConfig, ExportTask, VideoFile
 import export
+from export.model import ExportConfig, ExportTask, VideoFile
 from message import ExportMessage, WorkStateEnum
-
-if TYPE_CHECKING:
-    from SimpleCutMainFrame import SimpleCutPyMainFrame
 
 
 class CoreController:
-    """核心控制器"""
+    """核心控制器（无 UI 依赖）"""
 
-    def __init__(self, view: "SimpleCutPyMainFrame"):
-        self.view = view
+    def __init__(self):
         self.first_select_index: int = 0
         self.task = ExportTask()
+        self.working_threads: dict[str, threading.Thread] = {}
 
-        self.working_thread = {}
+        # 线程安全的结果队列，UI 层每帧轮询
+        self._export_results: deque[ExportMessage] = deque()
+        self._results_lock = threading.Lock()
+
+    # ---- 导出结果轮询接口 ----
+
+    def drain_export_results(self) -> list[ExportMessage]:
+        """取出所有待处理的导出结果，线程安全。"""
+        with self._results_lock:
+            results = list(self._export_results)
+            self._export_results.clear()
+        return results
+
+    def has_pending_exports(self) -> bool:
+        """是否还有导出线程在运行。"""
+        return len(self.working_threads) > 0
+
+    # ---- 文件操作 ----
 
     def get_file(self, index: int) -> VideoFile:
-        """获取文件
-
-        Args:
-            index (int): 文件索引
-
-        Returns:
-            VideoFile: 文件对象
-        """
         return self.task.video_sequence[index]
 
     def set_file(self, index: int, video: VideoFile):
-        """设置文件
-
-        Args:
-            index (int): 文件索引
-            video (VideoFile): 文件对象
-        """
         self.task.video_sequence.modify(index, video)
 
     def add_file(self, filename: str, path: str):
-        """添加文件
-
-        Args:
-            filename (str): 文件名
-            path (str): 文件路径
-        """
         self.task.video_sequence.append(
             VideoFile(
                 no=self.sequence_length() + 1,
@@ -62,58 +57,36 @@ class CoreController:
         )
 
     def remove_file(self, index: int):
-        """删除文件
-
-        Args:
-            index (int): 文件索引
-        """
         self.task.video_sequence.remove(index)
 
     def swap_file(self, index1: int, index2: int):
-        """交换文件
-
-        Args:
-            index1 (int): 文件索引1
-            index2 (int): 文件索引2
-        """
         self.task.video_sequence.swap(index1, index2)
-        # 更新编号
         self.task.video_sequence[index1].no, self.task.video_sequence[index2].no = (
             self.task.video_sequence[index2].no,
             self.task.video_sequence[index1].no,
         )
 
     def clear_all_files(self):
-        """清除所有文件"""
         self.task.video_sequence.clear()
 
     def sequence_length(self) -> int:
-        """获取视频序列长度
-
-        Returns:
-            int: 视频序列长度
-        """
         return len(self.task.video_sequence.video_files)
 
-    def setup_export_config(self, export_config: ExportConfig):
-        """设置导出配置
+    # ---- 导出配置 ----
 
-        Args:
-            export_config (ExportConfig): 导出配置对象
-        """
+    def setup_export_config(self, export_config: ExportConfig):
         self.task.export_config = export_config
 
-    def export_sequence(self):
-        """导出视频序列"""
+    # ---- 导出 ----
 
-        # 验证
+    def export_sequence(self):
+        """启动导出线程，结果通过 drain_export_results() 获取。"""
         try:
             self.task = ExportTask.model_validate(self.task)
         except ValidationError as e:
             logging.error(f"Export Task Validate Error: {e}")
             return
 
-        # 预处理，将多导出化为单导出
         tasks = []
         if self.task.export_config.multi_track_mode == "export_both":
             first_only_task = self.task.model_copy(deep=True)
@@ -121,7 +94,6 @@ class CoreController:
 
             amix_task = self.task.model_copy(deep=True)
             amix_task.export_config.multi_track_mode = "amix"
-            # 添加后缀
             header, ext = os.path.splitext(amix_task.get_export_full_path())
             amix_task.export_file_name = header + "_amix" + ext
 
@@ -130,46 +102,34 @@ class CoreController:
         else:
             tasks.append(self.task)
 
-        def export_thread(task):
-            """导出线程函数"""
-            success = export.core.export(task)
-            export_path = task.get_export_full_path()
-
-            # 从工作线程字典中移除
-            if export_path in self.working_thread:
-                self.working_thread.pop(export_path)
-
-            # 使用wx.CallAfter在主线程中更新UI
-            if success:
-                wx.CallAfter(
-                    self.view.on_export_done,
-                    ExportMessage(WorkStateEnum.SUCCESS, "导出完成", export_path),
-                )
-            else:
-                wx.CallAfter(
-                    self.view.on_export_done,
-                    ExportMessage(WorkStateEnum.FAIL, "导出失败", export_path),
-                )
-
         for task in tasks:
             export_path = task.get_export_full_path()
-            # 创建线程
-            thread = threading.Thread(target=export_thread, args=(task,))
-            # 保存线程引用
-            self.working_thread[export_path] = thread
-            # 启动线程
+            thread = threading.Thread(
+                target=self._export_thread, args=(task, export_path), daemon=True
+            )
+            self.working_threads[export_path] = thread
             thread.start()
+
+    def _export_thread(self, task: ExportTask, export_path: str):
+        """导出线程函数，完成后将结果推入安全队列。"""
+        success = export.core.export(task)
+
+        with self._results_lock:
+            if success:
+                self._export_results.append(
+                    ExportMessage(WorkStateEnum.SUCCESS, "导出完成", export_path)
+                )
+            else:
+                self._export_results.append(
+                    ExportMessage(WorkStateEnum.FAIL, "导出失败", export_path)
+                )
+
+        if export_path in self.working_threads:
+            self.working_threads.pop(export_path, None)
+
+    # ---- 工具 ----
 
     @staticmethod
     def format_time(time_str: str) -> str:
-        """格式化时间字符串
-
-        Args:
-            time_str (str): 时间字符串，要求只能由数字和冒号组成，或为特殊值"开始"/"结束"
-
-        Returns:
-            str: 格式化后的时间字符串
-        """
-
         time_str = time_str.strip().replace("：", ":").replace(" ", ":")
         return time_str

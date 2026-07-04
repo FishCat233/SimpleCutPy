@@ -55,6 +55,17 @@ wheels = [
 ]
 
 [[package]]
+name = "dearpygui"
+version = "2.3.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/20/f1/6f30c7eafa25755105d0c26049a95c89cc5c82b68971e1cc8ffea36b748a/dearpygui-2.3.1-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:6b1efd675a358176b3b76c039587a543d407d8fbb2cc3643a527e0ab7c0f5577", size = 2002717, upload-time = "2026-05-01T22:46:00.242Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/03/fa76c31087b6ebbc13948de6d9d3bc9ed9946824b13d9d1089356b54249c/dearpygui-2.3.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:364b5b6a0953999fec764d529d9bb0b2cc6ab6ed06188e0ded28237c1475ca98", size = 2678552, upload-time = "2026-05-01T22:46:07.502Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/ef/657ec68a79664cd28d98d590eed85103c6ffc1e23e7d3c4e5aedb7ee887d/dearpygui-2.3.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:199dffebda245c9f59aa7c10c3b7f62963237c5f744150ad9be409b27a2661d3", size = 2501224, upload-time = "2026-05-01T22:46:18.8Z" },
+    { url = "https://files.pythonhosted.org/packages/77/be/e67e5a04439f15e60cf596092a31b2a907272288954e47f5ced43c0b1678/dearpygui-2.3.1-cp312-cp312-win_amd64.whl", hash = "sha256:26ed9197cdb30099c665bd1b23724e0dba60ad06b71344ecca7e52748c21874b", size = 1882080, upload-time = "2026-05-01T22:45:49.366Z" },
+]
+
+[[package]]
 name = "idna"
 version = "3.11"
 source = { registry = "https://pypi.org/simple" }
@@ -257,14 +268,15 @@ wheels = [
 
 [[package]]
 name = "simplecutpy"
-version = "0.5.0"
+version = "0.5.1"
 source = { virtual = "." }
 dependencies = [
+    { name = "dearpygui" },
     { name = "logging" },
     { name = "pydantic" },
     { name = "pymediainfo" },
     { name = "requests" },
-    { name = "wxpython" },
+    { name = "winotify" },
 ]
 
 [package.dev-dependencies]
@@ -275,11 +287,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dearpygui", specifier = ">=2.0" },
     { name = "logging", specifier = ">=0.4.9.6" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pymediainfo", specifier = ">=7.0.1" },
     { name = "requests", specifier = ">=2.32.5" },
-    { name = "wxpython", specifier = ">=4.2.2" },
+    { name = "winotify", specifier = ">=0.3" },
 ]
 
 [package.metadata.requires-dev]
@@ -319,14 +332,10 @@ wheels = [
 ]
 
 [[package]]
-name = "wxpython"
-version = "4.2.4"
+name = "winotify"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/80/6e/b70e6dbdd7cb4f154b7ca424b4c7799f7b067f7a9f4204b8d16d6464648f/wxpython-4.2.4.tar.gz", hash = "sha256:2eb123979c87bcb329e8a2452269d60ff8f9f651e9bf25c67579e53c4ebbae3c", size = 58583054, upload-time = "2025-10-29T13:22:37.726Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/b0/1b304fdd8fd810f1f8e81a2708f8bf72e0987de1a763f0ee81f6d08bcae7/winotify-1.1.0.tar.gz", hash = "sha256:f8a0d6ff00cb2c1b3dcdfe825431f46f6aa5dc8ce84ffc59e8fda8c7e36687fe", size = 10101, upload-time = "2022-02-07T12:34:46.236Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/83/4359885c6f390235fefffb01bec0c1aa24a61cdcdbba0e857a5dcfbd5042/wxpython-4.2.4-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:a42807f84d504554a78bf7c4d0b8b18ec72de098b578bd4276bf5144b5a698ef", size = 18773068, upload-time = "2025-10-29T04:02:17.416Z" },
-    { url = "https://files.pythonhosted.org/packages/90/d8/9d55ef72e004d70a395402391aa5f9bd362253dd560f4c934efb02abe4f6/wxpython-4.2.4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:8b1c5f5c173a90c861f4f3453f2e066e29f258472c76d40f8e2ec16b0389971f", size = 17836963, upload-time = "2025-10-29T04:02:19.646Z" },
-    { url = "https://files.pythonhosted.org/packages/ef/1f/ddbb597c3d821d4206f85234736a4f19ef1b8875eefbf8d072ffcc01c1a4/wxpython-4.2.4-cp312-cp312-win32.whl", hash = "sha256:83e45e4d5d139638260c2f23108a94cb8d40bd5eb714d41b1009452e4ec4229a", size = 14507902, upload-time = "2025-10-29T04:02:22.309Z" },
-    { url = "https://files.pythonhosted.org/packages/90/c3/dfe74d7eb046612a3e475dce8ffda70341516129a7cb17fd60c8ae143304/wxpython-4.2.4-cp312-cp312-win_amd64.whl", hash = "sha256:c333113be1fcb4e4252890b3e66af016f03432b2fe15b370f38f2a505f5daa74", size = 16549996, upload-time = "2025-10-29T04:02:24.792Z" },
-    { url = "https://files.pythonhosted.org/packages/bb/29/5286f960de8079264e7a89ca4b4beae86844520b9521a1497c4908a8cae6/wxpython-4.2.4-cp312-cp312-win_arm64.whl", hash = "sha256:88b7e8cbdb141ebb4e361cd6f3d5595160764f0c05d2d7e03506b53860eb01ab", size = 15534326, upload-time = "2025-10-29T04:02:27.421Z" },
+    { url = "https://files.pythonhosted.org/packages/72/85/6cc4c738080d60b62cad59d0f32386b8277d40e2bf8c06fd1e4101a17238/winotify-1.1.0-py3-none-any.whl", hash = "sha256:13aa9b1196b02ab3e699645b4407371ca73348421f8662565100d70c7cf552d9", size = 15034, upload-time = "2022-02-07T12:34:44.341Z" },
 ]

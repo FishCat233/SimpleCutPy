@@ -1,15 +1,16 @@
 [project]
 name = "simplecutpy"
 version = "0.5.1"
-description = "A simple video cut tool based on wxpython, ffmpeg"
+description = "A simple video cut tool based on dearpygui, ffmpeg"
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
+    "dearpygui>=2.0",
     "logging>=0.4.9.6",
     "pydantic>=2.12.5",
     "pymediainfo>=7.0.1",
     "requests>=2.32.5",
-    "wxpython>=4.2.2",
+    "winotify>=0.3",
 ]
 
 [dependency-groups]
