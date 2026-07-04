@@ -1,4 +1,5 @@
 # SimpleCutPy
+![GitHub Release](https://img.shields.io/github/v/release/FishCat233/SimpleCutPy) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/FishCat233/SimpleCutPy/total)
 
 ***一款简单的影视素材剪辑器，用于对游戏回放素材进行快速剪辑***
 
