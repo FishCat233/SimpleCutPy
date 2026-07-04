@@ -1,6 +1,6 @@
 [project]
 name = "simplecutpy"
-version = "0.5.1"
+version = "0.5.2"
 description = "A simple video cut tool based on wxpython, ffmpeg"
 readme = "README.md"
 requires-python = "==3.12.*"
